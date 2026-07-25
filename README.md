@@ -16,7 +16,7 @@ A **modular, open-source** Discord bot built with **discord.js v14** and **TypeS
 - ⚡ **Slash commands** — fully typed, guild or global deployment
 - 🧩 **Modular structure** — drop in new commands and events without touching core files
 - 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
-- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`, `/rolemenu`, `/stats`, `/autorole`
+- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`, `/rolemenu`, `/stats`, `/autorole`, `/slowmode`, `/giveaway`
 - 📊 **Info commands** — `/ping`, `/botinfo`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`
 - 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`

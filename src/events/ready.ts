@@ -1,6 +1,8 @@
 import { Events } from 'discord.js';
+import { Giveaway } from '@db/schemas/giveaway';
 import { Logger } from '@core/Logger';
 import type { BotClient } from '@core/Client';
+import { endGiveaway } from '@commands/moderation/giveaway';
 
 export default {
   name: Events.ClientReady,
@@ -13,6 +15,7 @@ export default {
     Logger.info(`Commands:   ${client.commands.size}`);
     Logger.green('Bot is online and ready!');
 
+    // Status rotation
     if (client.user) {
       const activities = ['/help', 'open-source', 'discord.js v14'];
       let i = 0;
@@ -21,5 +24,24 @@ export default {
         i++;
       }, 30_000);
     }
+
+    // Giveaway checker — runs every 30 seconds
+    async function checkGiveaways() {
+      try {
+        const expired = await Giveaway.find({
+          ended: false,
+          endsAt: { $lte: new Date() },
+        });
+
+        for (const g of expired) {
+          await endGiveaway(g, client);
+        }
+      } catch (error) {
+        Logger.error('Giveaway check error:', error);
+      }
+    }
+
+    checkGiveaways(); // run immediately on startup
+    setInterval(checkGiveaways, 30_000);
   },
 };
