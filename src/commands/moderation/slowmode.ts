@@ -6,7 +6,6 @@ export default defineCommand({
   description: 'Set slowmode in a channel.',
   defaultMemberPermissions: Perm.ManageChannels,
   options: [
-    { type: 'channel', name: 'channel', description: 'Target channel', required: false },
     {
       type: 'integer',
       name: 'seconds',
@@ -15,19 +14,22 @@ export default defineCommand({
       min: 0,
       max: 21600,
     },
+    { type: 'channel', name: 'channel', description: 'Target channel', required: false },
   ],
   execute: async (interaction) => {
-    const channel = interaction.options.getChannel('channel') ?? interaction.channel;
     const seconds = interaction.options.getInteger('seconds', true);
+    const channel = (interaction.options.getChannel('channel') ?? interaction.channel) as any;
 
-    if (!channel || !('isTextBased' in channel) || !(channel as any).isTextBased?.()) {
-      await interaction.reply({ content: '❌ Not a text channel.', ephemeral: true });
+    if (!channel?.isTextBased()) {
+      await interaction.reply({ content: '❌ Invalid channel.', ephemeral: true });
       return;
     }
 
     await (channel as any).setRateLimitPerUser(seconds);
-    const label = seconds === 0 ? 'disabled' : `${seconds}s`;
-    Logger.info(`Slowmode ${label} in #${(channel as any).name}`);
-    await interaction.reply({ content: `✅ Slowmode set to **${label}**.` });
+    Logger.info(`Slowmode set to ${seconds}s in #${(channel as any).name}`);
+    await interaction.reply({
+      content: `✅ Slowmode set to **${seconds}s** in ${channel}.`,
+      ephemeral: true,
+    });
   },
 });
