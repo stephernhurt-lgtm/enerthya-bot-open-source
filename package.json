@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "discord.js": "^14.18.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "mongoose": "^9.8.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

@@ -17,6 +17,7 @@
       "@core/*": ["./src/core/*"],
       "@commands/*": ["./src/commands/*"],
       "@events/*": ["./src/events/*"],
+      "@db/*": ["./src/db/*"],
       "*": ["./*"]
     }
   },

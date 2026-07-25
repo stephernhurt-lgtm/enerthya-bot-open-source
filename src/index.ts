@@ -4,9 +4,14 @@ import { Logger } from '@core/Logger';
 import { loadEvents } from '@events/index';
 import { loadCommands } from '@commands/index';
 import { deployCommands } from './deploy-commands';
+import { connectDb } from '@db/index';
+import { initSchema } from '@db/schema';
 
 async function main() {
   Logger.section('ENERTHYA BOT — OPEN SOURCE');
+
+  await connectDb(config.mongoUri);
+  initSchema();
 
   const client = new BotClient();
 

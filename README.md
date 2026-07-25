@@ -20,6 +20,7 @@ A **modular, open-source** Discord bot built with **discord.js v14** and **TypeS
 - 📊 **Info commands** — `/ping`, `/botinfo`, `/help`
 - 🧹 **Clean logging** — no `console.log`, structured `Logger` with colours
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
+- 🗄️ **MongoDB** — Mongoose ODM built-in, ready for persistent data
 
 ---
 
