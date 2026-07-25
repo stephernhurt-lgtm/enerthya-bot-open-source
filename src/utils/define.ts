@@ -11,6 +11,9 @@ import {
   ChannelType,
 } from 'discord.js';
 import { isOwner } from './owner.js';
+import { Perm } from './permissions.js';
+
+export { Perm };
 
 /* ─── Types ─── */
 

@@ -1,6 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { Perm } from '../../utils/permissions.js';
-import { defineCommand } from '../../utils/define.js';
+import { defineCommand, Perm } from '../../utils/define.js';
 import { RoleMenu } from '../../db/schemas/rolemenu.js';
 import { Logger } from '../../core/Logger.js';
 

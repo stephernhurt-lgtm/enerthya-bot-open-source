@@ -1,5 +1,4 @@
-import { Perm } from '../../utils/permissions.js';
-import { defineCommand } from '../../utils/define.js';
+import { defineCommand, Perm } from '../../utils/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
 
