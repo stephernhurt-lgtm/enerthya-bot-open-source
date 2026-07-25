@@ -11,6 +11,7 @@ export interface IGuild {
   statsChannel_online?: string;
   statsChannel_bots?: string;
   statsChannel_humans?: string;
+  autoRoleId?: string;
 }
 
 const guildSchema = new Schema<IGuild>(
@@ -25,6 +26,7 @@ const guildSchema = new Schema<IGuild>(
     statsChannel_online: { type: String, default: null },
     statsChannel_bots: { type: String, default: null },
     statsChannel_humans: { type: String, default: null },
+    autoRoleId: { type: String, default: null },
   },
   { timestamps: true },
 );

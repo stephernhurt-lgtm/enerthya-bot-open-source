@@ -38,6 +38,20 @@ export default {
       Logger.error(`Welcome error for ${member.user?.tag}:`, error);
     }
 
+    // Auto-role
+    try {
+      const settings = await Guild.findOne({ guildId: member.guild.id });
+      if (settings?.autoRoleId) {
+        const role = member.guild.roles.cache.get(settings.autoRoleId);
+        if (role) {
+          await member.roles.add(role);
+          Logger.info(`Autorole assigned ${role.name} to ${member.user.tag}`);
+        }
+      }
+    } catch {
+      /* auto-role is best-effort */
+    }
+
     try {
       await updateAllStats(member.guild);
     } catch {
