@@ -14,20 +14,20 @@ A modular Discord bot built with **discord.js v14** and **TypeScript**. This is 
 ## ✨ Features
 
 - ⚡ **Slash commands** — fully typed, guild or global deployment
-- 🧩 **Modular structure** — drop in new commands and events without touching core files
-- 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
-- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/slowmode`
-- ⚙️ **Admin tools** — `/config`, `/giveaway`, `/autorole`, `/rolemenu`, `/stats`
-- 📊 **Info commands** — `/ping`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`
-- 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
-- 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
-- 🗄️ **MongoDB** — Mongoose ODM built-in, ready for persistent data
+- 🧩 **Modular structure** — commands, events, services, utils separados
+- 📦 **TypeScript + ESM** — path aliases resolvidos via `tsc-alias`
+- 🛡 **Moderation** — `/ban`, `/kick`, `/clear`, `/say`, `/slowmode`, `/lock`, `/unlock`
+- ⚙️ **Admin** — `/config`, `/giveaway`, `/autorole`, `/rolemenu`, `/stats`
+- 📊 **Info** — `/ping`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`, `/uptime`, `/invite`
+- 👑 **Owner** — `/servers` (só o dono do bot)
+- 🧹 **Logger** — console + arquivos separados por nível, chalk colors
+- 🗄️ **MongoDB** — Mongoose ODM com schemas tipados
 - 🛑 **Cooldowns** — anti-spam integrado nos comandos
-- 👋 **Welcome system** — customizable join messages per guild
-- 🚨 **Global error handler** — catches crashes and logs them
-- ✅ **Pre-commit hooks** — Husky + lint-staged: auto-format + type-check before every commit
-- 🎨 **Prettier** — consistent code style across all contributors
-- ⚙️ **VS Code settings** — recommended extensions and formatter config
+- 🚨 **Error Webhook** — crash reports enviados pro Discord
+- 📄 **Paginação** — embeds com ⬅️ ➡️ ❌ buttons
+- 👋 **Welcome system** — join message + auto-role configurável
+- 🎨 **Prettier** — formatação consistente
+- ✅ **Commitlint** — commits padronizados (feat:, fix:, chore:)
 
 ---
 
@@ -51,13 +51,17 @@ src/
 │   │   ├── poll.ts       # 📊 /poll
 │   │   ├── userinfo.ts   # 👤 /userinfo
 │   │   ├── serverinfo.ts # 🏠 /serverinfo
-│   │   └── avatar.ts     # 🖼️ /avatar
-│   └── moderation/
+│   │   ├── avatar.ts     # 🖼️ /avatar
+│   │   ├── uptime.ts     # ⏱️ /uptime
+│   │   └── invite.ts     # 🔗 /invite
+│   ├── moderation/
 │       ├── clear.ts      # 🧹 /clear
 │       ├── kick.ts       # 👢 /kick
 │       ├── ban.ts        # 🔨 /ban
 │       ├── say.ts        # 💬 /say
-│       └── slowmode.ts   # ⏱️ /slowmode
+│       ├── slowmode.ts   # ⏱️ /slowmode
+│       ├── lock.ts       # 🔒 /lock
+│       └── unlock.ts     # 🔓 /unlock
 ├── admin/
 │   ├── config.ts       # ⚙️ /config
 │   ├── giveaway.ts     # 🎁 /giveaway
@@ -75,18 +79,26 @@ src/
 │   ├── env.d.ts          # Typed process.env (DISCORD_TOKEN, etc.)
 │   ├── discord.d.ts      # Augments discord.js Client with .commands
 │   └── command.ts        # TypedCommand helper for easier command creation
+├── services/
+│   ├── giveawayService.ts  # 🎁 Giveaway logic (Fisher-Yates draw)
+│   ├── statsService.ts     # 📊 Voice channel stats updater
+│   └── configService.ts    # ⚙️ Guild prefix helper
 ├── utils/
-│   ├── validator.ts      # Credential validator
 │   ├── cooldown.ts       # Command cooldowns
 │   ├── audit.ts          # Moderation audit logs
-│   ├── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
-│   ├── define.ts         # ✨ Everything: defineCommand + cmd/str/usr/dual/ownerOnly/paginated
+│   ├── define.ts         # ✨ defineCommand + Perm + ownerOnly + paginate
 │   ├── pagination.ts     # Paginated embeds with ⬅️ ➡️ buttons
 │   ├── time.ts           # dayjs helpers (timestamps, durations)
 │   ├── env.ts            # Zod env validation
 │   ├── errorReporter.ts  # Error webhook reporter
 │   ├── owner.ts          # Owner check utility
-│   └── sync.ts           # Command sync CLI utilities
+│   ├── sync.ts           # Command sync CLI utilities
+│   ├── string.ts         # String helpers (capitalize, truncate, pluralize)
+│   ├── array.ts          # Array helpers (chunk, shuffle, uniqueBy)
+│   ├── embed.ts          # Embed builders (baseEmbed, successEmbed, errorEmbed)
+│   ├── constants.ts      # Global constants (colors, emojis, regions)
+│   ├── sanitize.ts       # Text sanitization
+│   └── paginateArray.ts  # Server-side pagination helper
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
