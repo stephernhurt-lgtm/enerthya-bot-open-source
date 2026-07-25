@@ -8,82 +8,10 @@ import {
   SlashCommandChannelOption,
   SlashCommandRoleOption,
   ChatInputCommandInteraction,
-  PermissionFlagsBits,
   ChannelType,
 } from 'discord.js';
 
-/* ===================================================================
-   define.ts — Best of both worlds
-   Use defineCommand() for Discord JSON-style, or cmd()/str()/usr()
-   for quick chaining. All in one place.
-   =================================================================== */
-
-// ─── Option helpers (builder.ts style) ───
-
-export function cmd(name: string, desc: string) {
-  return new SlashCommandBuilder().setName(name).setDescription(desc);
-}
-
-export function sub(name: string, desc: string) {
-  return new SlashCommandSubcommandBuilder().setName(name).setDescription(desc);
-}
-
-export function str(name: string, desc: string, required = true) {
-  return new SlashCommandStringOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-export function int(name: string, desc: string, required = true) {
-  return new SlashCommandIntegerOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-export function bool(name: string, desc: string, required = true) {
-  return new SlashCommandBooleanOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-export function usr(name: string, desc: string, required = true) {
-  return new SlashCommandUserOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-export function role(name: string, desc: string, required = true) {
-  return new SlashCommandRoleOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-export function ch(name: string, desc: string, required = true) {
-  return new SlashCommandChannelOption().setName(name).setDescription(desc).setRequired(required);
-}
-
-// ─── Permission shorthands ───
-
-export function modCmd(
-  name: string,
-  desc: string,
-  perms: bigint = PermissionFlagsBits.ManageMessages,
-) {
-  return cmd(name, desc).setDefaultMemberPermissions(perms);
-}
-
-export function adminCmd(name: string, desc: string) {
-  return cmd(name, desc).setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
-}
-
-// ─── Quick command factories ───
-
-type SlashHandler = (interaction: ChatInputCommandInteraction) => Promise<void>;
-type PrefixHandler = (message: any, args: string[]) => Promise<void>;
-
-export function simple(name: string, desc: string, handler: SlashHandler) {
-  return { data: cmd(name, desc), execute: handler };
-}
-
-export function modOnly(name: string, desc: string, handler: SlashHandler) {
-  return { data: modCmd(name, desc), execute: handler };
-}
-
-export function dual(name: string, desc: string, handler: SlashHandler, legacy?: PrefixHandler) {
-  return { data: cmd(name, desc), execute: handler, prefixExecute: legacy ?? handler };
-}
-
-// ─── defineCommand — Discord JSON-style config ───
+/* ─── Types ─── */
 
 type OptionType = 'string' | 'integer' | 'boolean' | 'user' | 'channel' | 'role';
 
@@ -115,6 +43,8 @@ export interface CommandConfig {
 }
 
 type CommandResult = { data: SlashCommandBuilder; execute: (interaction: any) => Promise<void> };
+
+/* ─── Option builder ─── */
 
 function addOption(
   builder: SlashCommandBuilder | SlashCommandSubcommandBuilder,
@@ -172,6 +102,8 @@ function addOption(
       break;
   }
 }
+
+/* ─── defineCommand ─── */
 
 export function defineCommand(config: CommandConfig): CommandResult {
   const builder = new SlashCommandBuilder().setName(config.name).setDescription(config.description);

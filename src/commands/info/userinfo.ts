@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { defineCommand, usr } from '../../utils/define.js';
+import { defineCommand } from '../../utils/define.js';
 
 export default defineCommand({
   name: 'userinfo',

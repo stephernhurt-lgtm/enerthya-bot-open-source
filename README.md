@@ -74,7 +74,14 @@ src/
 │   ├── cooldown.ts       # Command cooldowns
 │   ├── audit.ts          # Moderation audit logs
 │   ├── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
-│   └── builder.ts        # ✨ Command builders (cmd, str, usr, simple, modCmd)
+│   ├── builder.ts        # ✨ Quick builders (cmd, str, usr, simple, dual, ownerOnly)
+│   ├── define.ts         # defineCommand() — Discord JSON-style config
+│   ├── pagination.ts     # Paginated embeds with ⬅️ ➡️ buttons
+│   ├── time.ts           # dayjs helpers (timestamps, durations)
+│   ├── env.ts            # Zod env validation
+│   ├── errorReporter.ts  # Error webhook reporter
+│   ├── owner.ts          # Owner check utility
+│   └── sync.ts           # Command sync CLI utilities
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
