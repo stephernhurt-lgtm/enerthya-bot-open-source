@@ -38,9 +38,12 @@ export interface CommandConfig {
   defaultMemberPermissions?: bigint;
   dmPermission?: boolean;
   ownerOnly?: boolean;
+  paginate?: { title: string; itemsPerPage?: number };
   options?: OptionConfig[];
   subcommands?: SubConfig[];
-  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+  execute: (
+    interaction: ChatInputCommandInteraction,
+  ) => Promise<void | { name: string; value: string; inline?: boolean }[]>;
 }
 type CommandResult = { data: SlashCommandBuilder; execute: (interaction: any) => Promise<void> };
 
@@ -112,6 +115,8 @@ export function defineCommand(config: CommandConfig): CommandResult {
   if (config.dmPermission !== undefined) builder.setDMPermission(config.dmPermission);
 
   const originalExecute = config.execute;
+  const paginateConfig = config.paginate;
+
   const execute = config.ownerOnly
     ? async (interaction: any) => {
         if (!isOwner(interaction.user.id)) {
@@ -121,9 +126,29 @@ export function defineCommand(config: CommandConfig): CommandResult {
           });
           return;
         }
-        await originalExecute(interaction);
+        const result = await originalExecute(interaction);
+        if (paginateConfig && Array.isArray(result) && result.length > 0) {
+          const { paginate } = await import('./pagination.js');
+          await paginate(
+            interaction,
+            paginateConfig.title,
+            result,
+            paginateConfig.itemsPerPage ?? 5,
+          );
+        }
       }
-    : originalExecute;
+    : async (interaction: any) => {
+        const result = await originalExecute(interaction);
+        if (paginateConfig && Array.isArray(result) && result.length > 0) {
+          const { paginate } = await import('./pagination.js');
+          await paginate(
+            interaction,
+            paginateConfig.title,
+            result,
+            paginateConfig.itemsPerPage ?? 5,
+          );
+        }
+      };
 
   if (config.subcommands) {
     for (const sub of config.subcommands) {
