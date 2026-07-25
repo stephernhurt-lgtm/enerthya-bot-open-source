@@ -1,5 +1,7 @@
 # 🤖 Enerthya Bot — Open Source
 
+![CI](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source/actions/workflows/ci.yml/badge.svg)
+
 A **modular, open-source** Discord bot built with **discord.js v14** and **TypeScript**. Ready to deploy, easy to extend — perfect as a base for your own bot.
 
 > Built by [@stephernhurt-lgtm](https://github.com/stephernhurt-lgtm)
@@ -138,17 +140,31 @@ export default {
 
 ---
 
-## ☁️ Deployment (Coolify)
+## ☁️ Deployment
 
-This bot is self-host ready. Deploy on [Coolify](https://coolify.io/) with a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/):
+### Option 1: Coolify
 
-1. Push the repo to GitHub
-2. Import as a new Coolify service
-3. Set `DISCORD_TOKEN` and `CLIENT_ID` as environment variables
-4. Build command: `yarn build`
-5. Start command: `node dist/index.js`
+Push the repo to GitHub, import as a new Coolify service, set `DISCORD_TOKEN` and `CLIENT_ID` as environment variables, and use:
+
+| Field | Value |
+|-------|-------|
+| Build | `yarn build` |
+| Start | `node dist/index.js` |
 
 No `config.json` needed — everything runs from `.env`.
+
+### Option 2: Docker
+
+```bash
+# Build & run in background
+docker compose up -d --build
+```
+
+Or pull from any registry and run:
+
+```bash
+docker run -d --env-file .env stephernhurt-lgtm/enerthya-bot-open-source
+```
 
 ---
 
