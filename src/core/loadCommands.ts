@@ -1,13 +1,14 @@
 import { readdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Logger } from '../core/Logger.js';
-import type { BotClient } from '../core/Client.js';
+import { dirname } from 'node:path';
+import { Logger } from './Logger.js';
+import type { BotClient } from './Client.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const commandsPath = join(__dirname, '..', 'commands');
 
 export async function loadCommands(client: BotClient): Promise<void> {
-  const commandsPath = join(__dirname);
   const folders = readdirSync(commandsPath).filter(
     (f) => !f.includes('.') && f !== 'index.ts' && f !== 'index.js',
   );

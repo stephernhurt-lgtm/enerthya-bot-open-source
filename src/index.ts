@@ -5,8 +5,8 @@
 import { BotClient } from '@core/Client';
 import { config } from '@config/index';
 import { Logger } from '@core/Logger';
-import { loadEvents } from '@events/index';
-import { loadCommands } from '@commands/index';
+import { loadEvents } from '@core/loadEvents.js';
+import { loadCommands } from '@core/loadCommands.js';
 import { deployCommands } from './deploy-commands';
 import { connectDb } from '@db/index';
 import { initSchema } from '@db/schema';

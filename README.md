@@ -40,13 +40,17 @@ src/
 │   └── index.ts          # Environment config (.env)
 ├── core/
 │   ├── Client.ts         # Extended Discord.js Client
-│   └── Logger.ts         # Structured coloured logger
+│   ├── Logger.ts         # Structured coloured logger
+│   ├── loadCommands.ts   # Auto-loader for commands/
+│   └── loadEvents.ts     # Auto-loader for events/
 ├── commands/
-│   ├── index.ts          # Command loader
 │   ├── info/
 │   │   ├── ping.ts       # 🏓 /ping
-│   │   ├── botinfo.ts    # 🤖 /botinfo
-│   │   └── help.ts       # 📖 /help
+│   │   ├── help.ts       # 📖 /help
+│   │   ├── poll.ts       # 📊 /poll
+│   │   ├── userinfo.ts   # 👤 /userinfo
+│   │   ├── serverinfo.ts # 🏠 /serverinfo
+│   │   └── avatar.ts     # 🖼️ /avatar
 │   └── moderation/
 │       ├── clear.ts      # 🧹 /clear
 │       ├── kick.ts       # 👢 /kick
