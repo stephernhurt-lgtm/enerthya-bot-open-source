@@ -179,6 +179,27 @@ export async function execute(interaction) { /* ... */ }
 | `role(name, desc, required?)` | Role option |
 | `ch(name, desc, required?)` | Channel option |
 | `simple(name, desc, handler)` | Returns `{ data, execute }` ready to export |
+| `dual(name, desc, slashHandler, prefixHandler?)` | Command that works with **both** `/slash` and `!prefix` |
+
+### ⚡ Prefix commands
+
+This bot supports **both** slash commands and traditional prefix commands (`!ping`, `/ping`).
+
+- **Default prefix**: `/` (configurable via `/config set prefix !`)
+- Commands export `prefixExecute(message, args)` for prefix support
+- Use `dual()` helper to create a command that works both ways:
+
+```ts
+import { dual } from '../utils/builder';
+
+export default dual('ping', 'Check latency',
+  async (i) => { /* slash handler — receives Interaction */ },
+  async (m, a) => { /* prefix handler — receives Message + args */ },
+);
+```
+
+> ⚡ **`simple()`** + **`dual()`** both work with prefix if you export `prefixExecute`.
+> The `ping` command already ships with full prefix support. Try `!ping` or `/ping`!
 
 > 💡 **Tip:** Use `replyError` and `replySuccess` from `@utils/helpers` for quick ephemeral responses.
 

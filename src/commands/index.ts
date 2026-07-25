@@ -17,14 +17,14 @@ export async function loadCommands(client: BotClient): Promise<void> {
 
     for (const file of commandFiles) {
       const command = await import(join(folderPath, file));
-      const { data, execute } = command;
+      const { data, execute, prefixExecute } = command;
 
       if (!data || !execute) {
         Logger.warn(`Command at ${folder}/${file} is missing data or execute.`);
         continue;
       }
 
-      client.commands.set(data.name, { data, execute, category: folder });
+      client.commands.set(data.name, { data, execute, category: folder, prefixExecute });
       Logger.debug(`Loaded command: /${data.name}`);
     }
   }

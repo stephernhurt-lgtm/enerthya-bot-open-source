@@ -83,6 +83,7 @@ export function ch(name: string, description: string, required = true) {
 /* ─── Simple command factory ─── */
 
 type SimpleHandler = (interaction: ChatInputCommandInteraction) => Promise<void>;
+type LegacyHandler = (message: any, args: string[]) => Promise<void>;
 
 export function simple(name: string, description: string, handler: SimpleHandler) {
   return {
@@ -95,5 +96,19 @@ export function modOnly(name: string, description: string, handler: SimpleHandle
   return {
     data: modCmd(name, description),
     execute: handler,
+  };
+}
+
+/** Command that works with both /slash and prefix (!) */
+export function dual(
+  name: string,
+  description: string,
+  handler: SimpleHandler,
+  legacy?: LegacyHandler,
+) {
+  return {
+    data: cmd(name, description),
+    execute: handler,
+    prefixExecute: legacy ?? handler,
   };
 }

@@ -5,6 +5,7 @@ export interface BotCommand {
   data: unknown;
   execute: (interaction: any) => Promise<void>;
   category?: string;
+  prefixExecute?: (message: any, args: string[]) => Promise<void>;
 }
 
 export class BotClient extends Client {
