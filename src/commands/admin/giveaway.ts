@@ -4,6 +4,7 @@ import { Giveaway } from '../../db/schemas/giveaway.js';
 import { Logger } from '../../core/Logger.js';
 import { timestamp } from '../../utils/format/time.js';
 import { endGiveaway } from '../../services/community/giveawayService.js';
+import { paginate } from '../../utils/data/pagination.js';
 
 export default defineCommand({
   name: 'giveaway',
@@ -32,6 +33,7 @@ export default defineCommand({
         },
       ],
     },
+    { name: 'list', description: 'List active giveaways.' },
     {
       name: 'end',
       description: 'End a giveaway early.',
@@ -87,6 +89,21 @@ export default defineCommand({
         content: `✅ Giveaway started! [Jump](${message.url})`,
         ephemeral: true,
       });
+      return;
+    }
+
+    if (sub === 'list') {
+      const giveaways = await Giveaway.find({ guildId: interaction.guild.id, ended: false });
+      if (giveaways.length === 0) {
+        await interaction.reply({ content: '📭 No active giveaways.', ephemeral: true });
+        return;
+      }
+      const items = giveaways.map((g) => ({
+        name: g.prize,
+        value: `Ends ${timestamp(g.endsAt, 'R')} · ${g.winnerCount} winner(s) · Host: <@${g.hosterId}>`,
+        inline: false,
+      }));
+      await paginate(interaction, '🎁 Active Giveaways', items, 5);
       return;
     }
 

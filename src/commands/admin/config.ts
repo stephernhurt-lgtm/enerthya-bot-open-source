@@ -1,4 +1,10 @@
-import { EmbedBuilder } from 'discord.js';
+import {
+  EmbedBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
+} from 'discord.js';
 import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Logger } from '../../core/Logger.js';
 import { Guild } from '../../db/schemas/guild.js';
@@ -17,6 +23,7 @@ export default defineCommand({
   defaultMemberPermissions: Perm.ManageGuild,
   subcommands: [
     { name: 'view', description: 'Show current guild settings.' },
+    { name: 'edit', description: 'Edit guild settings via modal.' },
     {
       name: 'set',
       description: 'Update a guild setting.',
@@ -33,13 +40,7 @@ export default defineCommand({
             { name: 'audit_channel', value: 'audit_channel' },
           ],
         },
-        {
-          type: 'string',
-          name: 'value',
-          description: 'New value (channel ID for audit_channel)',
-          required: true,
-          max: 500,
-        },
+        { type: 'string', name: 'value', description: 'New value', required: true, max: 500 },
       ],
     },
   ],
@@ -61,17 +62,69 @@ export default defineCommand({
     if (sub === 'view') {
       const settings = await Guild.findOne({ guildId });
       const s = settings ?? defaults;
-      const embed = new EmbedBuilder()
-        .setColor(0x2b2d31)
-        .setTitle('⚙️ Guild Settings')
-        .addFields(
-          { name: 'Prefix', value: `\`${s.prefix}\``, inline: true },
-          { name: 'Language', value: s.language, inline: true },
-          { name: 'Welcome', value: s.welcomeMessage ?? 'Not set' },
-          { name: 'Audit Channel', value: s.auditChannelId ? `<#${s.auditChannelId}>` : 'Not set' },
-        )
-        .setTimestamp();
-      await interaction.reply({ embeds: [embed] });
+      await interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x2b2d31)
+            .setTitle('⚙️ Guild Settings')
+            .addFields(
+              { name: 'Prefix', value: `\`${s.prefix}\``, inline: true },
+              { name: 'Language', value: s.language, inline: true },
+              { name: 'Welcome', value: s.welcomeMessage ?? 'Not set' },
+              {
+                name: 'Audit Channel',
+                value: s.auditChannelId ? `<#${s.auditChannelId}>` : 'Not set',
+              },
+            )
+            .setTimestamp(),
+        ],
+      });
+      return;
+    }
+
+    if (sub === 'edit') {
+      const settings = await Guild.findOne({ guildId });
+      const s = settings ?? defaults;
+
+      const modal = new ModalBuilder()
+        .setCustomId(`config_edit_${guildId}`)
+        .setTitle('Edit Guild Settings')
+        .addComponents(
+          new ActionRowBuilder<TextInputBuilder>().addComponents(
+            new TextInputBuilder()
+              .setCustomId('prefix')
+              .setLabel('Prefix')
+              .setStyle(TextInputStyle.Short)
+              .setValue(s.prefix)
+              .setRequired(true)
+              .setMaxLength(3),
+          ),
+          new ActionRowBuilder<TextInputBuilder>().addComponents(
+            new TextInputBuilder()
+              .setCustomId('language')
+              .setLabel('Language (en/pt)')
+              .setStyle(TextInputStyle.Short)
+              .setValue(s.language)
+              .setMaxLength(5),
+          ),
+          new ActionRowBuilder<TextInputBuilder>().addComponents(
+            new TextInputBuilder()
+              .setCustomId('welcomeMessage')
+              .setLabel('Welcome Message')
+              .setStyle(TextInputStyle.Paragraph)
+              .setValue(s.welcomeMessage ?? '')
+              .setMaxLength(500),
+          ),
+          new ActionRowBuilder<TextInputBuilder>().addComponents(
+            new TextInputBuilder()
+              .setCustomId('auditChannelId')
+              .setLabel('Audit Channel ID')
+              .setStyle(TextInputStyle.Short)
+              .setValue(s.auditChannelId ?? ''),
+          ),
+        );
+
+      await interaction.showModal(modal);
       return;
     }
 
