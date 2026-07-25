@@ -3,6 +3,7 @@ import { defineCommand, Perm } from '../../utils/define.js';
 import { Giveaway } from '../../db/schemas/giveaway.js';
 import { Logger } from '../../core/Logger.js';
 import { timestamp } from '../../utils/time.js';
+import { endGiveaway } from '../../services/giveawayService.js';
 
 export default defineCommand({
   name: 'giveaway',
@@ -72,7 +73,6 @@ export default defineCommand({
 
       const message = await (interaction.channel as any).send({ embeds: [embed] });
       await message.react('🎉');
-
       await Giveaway.create({
         guildId: interaction.guild.id,
         channelId: interaction.channel!.id,
@@ -97,12 +97,10 @@ export default defineCommand({
         messageId,
         ended: false,
       });
-
       if (!giveaway) {
         await interaction.reply({ content: '❌ Not found or already ended.', ephemeral: true });
         return;
       }
-
       giveaway.endsAt = new Date();
       await giveaway.save();
       await endGiveaway(giveaway, interaction.client);
@@ -110,52 +108,3 @@ export default defineCommand({
     }
   },
 });
-
-// ─── endGiveaway — called by ready.ts checker and /giveaway end ───
-
-export async function endGiveaway(giveaway: any, client: any): Promise<void> {
-  try {
-    const channel = await client.channels.fetch(giveaway.channelId).catch(() => null);
-    if (!channel) return;
-    const message = await channel.messages.fetch(giveaway.messageId).catch(() => null);
-    if (!message) return;
-
-    const reaction = message.reactions.cache.get('🎉');
-    if (!reaction) {
-      await message.reply('❌ No entries found.');
-      return;
-    }
-
-    const users = await reaction.users.fetch();
-    const entries = users.filter((u: any) => !u.bot).map((u: any) => u);
-
-    if (entries.length === 0) {
-      const embed = EmbedBuilder.from(message.embeds[0])
-        .setColor(0xed4245)
-        .setFooter({ text: 'Ended — No winners' });
-      await message.edit({ embeds: [embed] });
-      await message.reply('🎁 Giveaway ended — no one entered.');
-      return;
-    }
-
-    // Fisher-Yates shuffle (unbiased)
-    for (let i = entries.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [entries[i], entries[j]] = [entries[j], entries[i]];
-    }
-    const winners = entries.slice(0, giveaway.winnerCount);
-
-    const embed = EmbedBuilder.from(message.embeds[0])
-      .setColor(0x57f287)
-      .setFooter({ text: 'Ended' });
-    await message.edit({ embeds: [embed] });
-    await message.reply(
-      `🎁 **${giveaway.prize}**\nWinner(s): ${winners.map((w: any) => w.toString()).join(', ')}`,
-    );
-
-    await Giveaway.findByIdAndUpdate(giveaway._id, { ended: true });
-    Logger.info(`Giveaway ended: "${giveaway.prize}" — ${winners.length} winner(s)`);
-  } catch (error) {
-    Logger.error('Giveaway end error:', error);
-  }
-}

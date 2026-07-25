@@ -2,6 +2,7 @@ import { ChannelType } from 'discord.js';
 import { defineCommand, Perm } from '../../utils/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
+import { updateAllStats } from '../../services/statsService.js';
 
 export default defineCommand({
   name: 'stats',
@@ -60,30 +61,3 @@ export default defineCommand({
     });
   },
 });
-
-// ─── Update all stats channels (called by guildMemberAdd/Remove) ───
-
-export async function updateAllStats(guild: any): Promise<void> {
-  const settings = await Guild.findOne({ guildId: guild.id });
-  if (!settings) return;
-
-  const types = ['total', 'online', 'bots', 'humans'] as const;
-  for (const type of types) {
-    const key = `statsChannel_${type}` as keyof typeof settings;
-    const channelId = (settings as any)[key];
-    if (!channelId) continue;
-
-    const channel = guild.channels.cache.get(channelId);
-    if (!channel) continue;
-
-    const members = guild.members.cache;
-    const labels: Record<string, string> = {
-      total: `👥 Total: ${guild.memberCount}`,
-      online: `🟢 Online: ${members.filter((m: any) => m.presence?.status === 'online').size}`,
-      bots: `🤖 Bots: ${members.filter((m: any) => m.user.bot).size}`,
-      humans: `👤 Humans: ${members.filter((m: any) => !m.user.bot).size}`,
-    };
-
-    await channel.setName(labels[type]).catch(() => {});
-  }
-}
