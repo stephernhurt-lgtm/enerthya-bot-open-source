@@ -2,7 +2,12 @@ import { EmbedBuilder } from 'discord.js';
 import { defineCommand } from '../../utils/define.js';
 import type { BotClient } from '../../core/Client.js';
 
-const categoryEmojis: Record<string, string> = { info: 'ℹ️', moderation: '🛡️' };
+const categoryEmojis: Record<string, string> = {
+  info: 'ℹ️',
+  moderation: '🛡️',
+  admin: '⚙️',
+  owner: '👑',
+};
 
 export default defineCommand({
   name: 'help',
