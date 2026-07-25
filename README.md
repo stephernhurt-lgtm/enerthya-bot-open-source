@@ -160,4 +160,14 @@ MIT — use it, modify it, ship it. See [LICENSE](./LICENSE).
 
 ## ⭐ Contribute
 
-Found a bug? Want a feature? Open an issue or pull request. All contributions welcome.
+Found a bug? Want a feature? Open an issue or pull request.
+
+### Branch flow
+
+```
+develop  ←── PRs (all contributions go here first)
+    │
+    └──→ main (stable releases)
+```
+
+All pull requests should target the **`develop`** branch. Changes are tested on `develop` before being merged into `main` for release.
