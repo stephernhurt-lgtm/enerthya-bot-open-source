@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Enerthya Bot — Copyright (c) 2026 stephernhurt-lgtm
+// See LICENSE for full license text.
+
 import { BotClient } from '@core/Client';
 import { config } from '@config/index';
 import { Logger } from '@core/Logger';
@@ -11,28 +15,24 @@ import { validateCredentials } from '@utils/validator';
 async function main() {
   Logger.section('ENERTHYA BOT');
 
-  // Validate all credentials before starting
   const { valid } = validateCredentials();
   if (!valid) {
-    Logger.error('Validation failed — stopping startup.');
+    Logger.error('Validation failed — stopping.');
     process.exit(1);
   }
 
-  // Connect to database
   await connectDb(config.mongoUri);
   initSchema();
 
-  // Build client
   const client = new BotClient();
   await loadEvents(client);
   await loadCommands(client);
   await deployCommands(client);
 
-  // Login
   await client.start(config.token);
 }
 
 main().catch((err) => {
-  Logger.error('Fatal error:', err);
+  Logger.error('Fatal:', err);
   process.exit(1);
 });

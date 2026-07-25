@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A modular, open-source Discord.js v14 bot template — ready to build and extend.",
   "author": "stephernhurt-lgtm",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "main": "dist/index.js",
   "files": [
     "dist"

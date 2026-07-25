@@ -1,7 +1,7 @@
 # 🤖 Enerthya Bot — Open Source
 
 ![CI](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source/actions/workflows/ci.yml/badge.svg)
-![License](https://img.shields.io/github/license/stephernhurt-lgtm/enerthya-bot-open-source?color=blue)
+![License](https://img.shields.io/github/license/stephernhurt-lgtm/enerthya-bot-open-source?color=blue&label=AGPL)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/discord.js-v14-5865F2?logo=discord)
 
@@ -17,7 +17,7 @@ A **modular, open-source** Discord bot built with **discord.js v14** and **TypeS
 - 🧩 **Modular structure** — drop in new commands and events without touching core files
 - 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
 - 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`, `/rolemenu`, `/stats`, `/autorole`, `/slowmode`, `/giveaway`
-- 📊 **Info commands** — `/ping`, `/botinfo`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`
+- 📊 **Info commands** — `/ping`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`
 - 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
 - 🗄️ **MongoDB** — Mongoose ODM built-in, ready for persistent data
@@ -281,7 +281,9 @@ docker run -d --env-file .env stephernhurt-lgtm/enerthya-bot-open-source
 
 ## 📄 License
 
-MIT — use it, modify it, ship it. See [LICENSE](./LICENSE).
+**AGPL-3.0-only** — This bot's source code is publicly available for viewing and contribution. Any use, modification, or distribution must comply with the GNU Affero General Public License v3.0, which requires that modified versions also remain open source and give proper credit to the original author.
+
+[Full license text](./LICENSE)
 
 ---
 
