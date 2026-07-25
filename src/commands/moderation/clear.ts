@@ -1,4 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { Logger } from '@core/Logger';
+import { getAuditChannel, sendAudit } from '@utils/audit';
 
 export const data = new SlashCommandBuilder()
   .setName('clear')
@@ -60,6 +62,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     setTimeout(() => reply.delete().catch(() => {}), 5000);
+
+    if (interaction.guild) {
+      const auditCh = await getAuditChannel(interaction.guild.id, interaction.client.channels);
+      if (auditCh) {
+        await sendAudit(auditCh, 'clear', [
+          { name: 'Channel', value: `<#${interaction.channel.id}>`, inline: true },
+          { name: 'Messages', value: `${deleted}`, inline: true },
+          { name: 'Moderator', value: interaction.user.tag },
+        ]);
+      }
+    }
   } catch {
     await interaction.reply({
       content: '❌ Could not delete messages. They may be older than 14 days.',

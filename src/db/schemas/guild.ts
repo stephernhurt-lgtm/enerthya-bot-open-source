@@ -6,6 +6,7 @@ export interface IGuild {
   language: string;
   welcomeChannelId?: string;
   welcomeMessage?: string;
+  auditChannelId?: string;
 }
 
 const guildSchema = new Schema<IGuild>(
@@ -15,6 +16,7 @@ const guildSchema = new Schema<IGuild>(
     language: { type: String, default: 'en' },
     welcomeChannelId: { type: String, default: null },
     welcomeMessage: { type: String, default: null },
+    auditChannelId: { type: String, default: null },
   },
   { timestamps: true },
 );

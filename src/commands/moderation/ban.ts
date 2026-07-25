@@ -5,6 +5,7 @@ import {
   EmbedBuilder,
 } from 'discord.js';
 import { Logger } from '@core/Logger';
+import { getAuditChannel, sendAudit } from '@utils/audit';
 
 export const data = new SlashCommandBuilder()
   .setName('ban')
@@ -78,4 +79,18 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     .setTimestamp();
 
   await interaction.reply({ embeds: [embed] });
+
+  const auditCh = await getAuditChannel(interaction.guild.id, interaction.client.channels);
+  if (auditCh) {
+    await sendAudit(auditCh, 'ban', [
+      { name: 'Target', value: `${target.tag} (${target.id})`, inline: true },
+      { name: 'Reason', value: reason, inline: true },
+      {
+        name: 'Messages Deleted',
+        value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
+        inline: true,
+      },
+      { name: 'Moderator', value: interaction.user.tag },
+    ]);
+  }
 }
