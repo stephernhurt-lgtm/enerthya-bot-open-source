@@ -1,5 +1,5 @@
 import { Logger } from '@core/Logger.js';
-import { Guild } from './schemas/guild';
+import { Guild } from './schemas/guild.js';
 
 export function initSchema(): void {
   // Ensure all models are registered by referencing them

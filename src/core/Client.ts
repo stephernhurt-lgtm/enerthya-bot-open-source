@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import { Logger } from './Logger';
+import { Logger } from './Logger.js';
 
 export interface BotCommand {
   data: unknown;

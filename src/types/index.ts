@@ -1,1 +1,1 @@
-export { TypedCommand, command } from './command';
+export { TypedCommand, command } from './command.js';
