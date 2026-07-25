@@ -10,6 +10,10 @@ export const envSchema = z.object({
     .string()
     .regex(/^\d{17,20}$/, 'Must be a snowflake')
     .optional(),
+  OWNER_ID: z
+    .string()
+    .regex(/^\d{17,20}$/, 'Must be a snowflake')
+    .optional(),
 });
 
 export type EnvVars = z.infer<typeof envSchema>;

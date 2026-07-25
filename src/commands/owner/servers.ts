@@ -1,0 +1,28 @@
+import { EmbedBuilder } from 'discord.js';
+import { defineCommand } from '../../utils/define.js';
+import { isOwner } from '../../utils/owner.js';
+
+export default defineCommand({
+  name: 'servers',
+  description: 'List all servers the bot is in. (Owner only)',
+  execute: async (interaction) => {
+    if (!isOwner(interaction.user.id)) {
+      await interaction.reply({ content: '❌ Only the bot owner can use this.', ephemeral: true });
+      return;
+    }
+
+    const client = interaction.client as any;
+    const guilds = client.guilds.cache
+      .map((g: any) => `**${g.name}** — ${g.memberCount} members (${g.id})`)
+      .join('\n');
+
+    const embed = new EmbedBuilder()
+      .setColor(0x2b2d31)
+      .setTitle('📋 Servers')
+      .setDescription(guilds || 'No servers.')
+      .setFooter({ text: `${client.guilds.cache.size} total` })
+      .setTimestamp();
+
+    await interaction.reply({ embeds: [embed] });
+  },
+});
