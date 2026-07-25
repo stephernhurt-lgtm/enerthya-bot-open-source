@@ -1,4 +1,4 @@
-import { PermissionFlagsBits } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
@@ -6,7 +6,7 @@ import { Logger } from '../../core/Logger.js';
 export default defineCommand({
   name: 'autorole',
   description: 'Set or remove the auto-role for new members.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageRoles,
+  defaultMemberPermissions: Perm.ManageRoles,
   subcommands: [
     {
       name: 'set',

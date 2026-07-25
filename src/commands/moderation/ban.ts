@@ -1,11 +1,12 @@
-import { PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 
 export default defineCommand({
   name: 'ban',
   description: 'Ban a member from the server.',
-  defaultMemberPermissions: PermissionFlagsBits.BanMembers,
+  defaultMemberPermissions: Perm.BanMembers,
   options: [
     { type: 'user', name: 'target', description: 'The member to ban', required: true },
     { type: 'string', name: 'reason', description: 'Reason for the ban', max: 512 },

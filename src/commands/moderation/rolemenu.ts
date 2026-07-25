@@ -1,4 +1,5 @@
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { RoleMenu } from '../../db/schemas/rolemenu.js';
 import { Logger } from '../../core/Logger.js';
@@ -6,7 +7,7 @@ import { Logger } from '../../core/Logger.js';
 export default defineCommand({
   name: 'rolemenu',
   description: 'Create a reaction role message.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageRoles,
+  defaultMemberPermissions: Perm.ManageRoles,
   options: [
     { type: 'string', name: 'title', description: 'Embed title', required: true, max: 100 },
     {

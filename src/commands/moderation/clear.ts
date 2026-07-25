@@ -1,4 +1,4 @@
-import { PermissionFlagsBits } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Logger } from '../../core/Logger.js';
 import { getAuditChannel, sendAudit } from '../../utils/audit.js';
@@ -6,7 +6,7 @@ import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 export default defineCommand({
   name: 'clear',
   description: 'Bulk delete messages in the channel.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageMessages,
+  defaultMemberPermissions: Perm.ManageMessages,
   options: [
     {
       type: 'integer',

@@ -1,11 +1,11 @@
-import { PermissionFlagsBits } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Logger } from '../../core/Logger.js';
 
 export default defineCommand({
   name: 'slowmode',
   description: 'Set slowmode in a channel.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+  defaultMemberPermissions: Perm.ManageChannels,
   options: [
     { type: 'channel', name: 'channel', description: 'Target channel', required: false },
     {

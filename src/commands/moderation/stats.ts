@@ -1,4 +1,5 @@
-import { PermissionFlagsBits, ChannelType } from 'discord.js';
+import { ChannelType } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
@@ -6,7 +7,7 @@ import { Logger } from '../../core/Logger.js';
 export default defineCommand({
   name: 'stats',
   description: 'Set up server stats voice channels.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  defaultMemberPermissions: Perm.ManageGuild,
   options: [
     {
       type: 'channel',

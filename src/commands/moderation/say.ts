@@ -1,11 +1,11 @@
-import { PermissionFlagsBits } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Logger } from '../../core/Logger.js';
 
 export default defineCommand({
   name: 'say',
   description: 'Make the bot say something in a channel.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageMessages,
+  defaultMemberPermissions: Perm.ManageMessages,
   options: [
     {
       type: 'string',

@@ -36,6 +36,7 @@ export interface CommandConfig {
   name: string;
   description: string;
   defaultMemberPermissions?: bigint;
+  defaultBotPermissions?: bigint;
   dmPermission?: boolean;
   ownerOnly?: boolean;
   paginate?: { title: string; itemsPerPage?: number };
@@ -117,38 +118,31 @@ export function defineCommand(config: CommandConfig): CommandResult {
   const originalExecute = config.execute;
   const paginateConfig = config.paginate;
 
-  const execute = config.ownerOnly
-    ? async (interaction: any) => {
-        if (!isOwner(interaction.user.id)) {
-          await interaction.reply({
-            content: '❌ Only the bot owner can use this.',
-            ephemeral: true,
-          });
-          return;
-        }
-        const result = await originalExecute(interaction);
-        if (paginateConfig && Array.isArray(result) && result.length > 0) {
-          const { paginate } = await import('./pagination.js');
-          await paginate(
-            interaction,
-            paginateConfig.title,
-            result,
-            paginateConfig.itemsPerPage ?? 5,
-          );
-        }
+  const execute = async (interaction: any) => {
+    // Owner check
+    if (config.ownerOnly && !isOwner(interaction.user.id)) {
+      await interaction.reply({ content: '❌ Only the bot owner can use this.', ephemeral: true });
+      return;
+    }
+
+    // Bot permission check
+    if (config.defaultBotPermissions && interaction.guild) {
+      const bot = interaction.guild.members.me;
+      if (bot && !bot.permissions.has(config.defaultBotPermissions)) {
+        await interaction.reply({
+          content: "❌ I don't have the required permissions to do that.",
+          ephemeral: true,
+        });
+        return;
       }
-    : async (interaction: any) => {
-        const result = await originalExecute(interaction);
-        if (paginateConfig && Array.isArray(result) && result.length > 0) {
-          const { paginate } = await import('./pagination.js');
-          await paginate(
-            interaction,
-            paginateConfig.title,
-            result,
-            paginateConfig.itemsPerPage ?? 5,
-          );
-        }
-      };
+    }
+
+    const result = await originalExecute(interaction);
+    if (paginateConfig && Array.isArray(result) && result.length > 0) {
+      const { paginate } = await import('./pagination.js');
+      await paginate(interaction, paginateConfig.title, result, paginateConfig.itemsPerPage ?? 5);
+    }
+  };
 
   if (config.subcommands) {
     for (const sub of config.subcommands) {

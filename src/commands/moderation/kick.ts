@@ -1,4 +1,5 @@
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Logger } from '../../core/Logger.js';
 import { getAuditChannel, sendAudit } from '../../utils/audit.js';
@@ -6,7 +7,7 @@ import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 export default defineCommand({
   name: 'kick',
   description: 'Kick a member from the server.',
-  defaultMemberPermissions: PermissionFlagsBits.KickMembers,
+  defaultMemberPermissions: Perm.KickMembers,
   options: [
     { type: 'user', name: 'target', description: 'The member to kick', required: true },
     {

@@ -1,4 +1,5 @@
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+import { Perm } from '../../utils/permissions.js';
 import { defineCommand } from '../../utils/define.js';
 import { Logger } from '../../core/Logger.js';
 import { Guild } from '../../db/schemas/guild.js';
@@ -7,7 +8,7 @@ import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 export default defineCommand({
   name: 'config',
   description: 'View or update guild settings.',
-  defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  defaultMemberPermissions: Perm.ManageGuild,
   subcommands: [
     {
       name: 'view',
