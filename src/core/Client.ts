@@ -4,6 +4,7 @@ import { Logger } from './Logger';
 export interface BotCommand {
   data: unknown;
   execute: (interaction: any) => Promise<void>;
+  category?: string;
 }
 
 export class BotClient extends Client {

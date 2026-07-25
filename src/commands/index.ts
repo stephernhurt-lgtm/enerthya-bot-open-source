@@ -24,7 +24,7 @@ export async function loadCommands(client: BotClient): Promise<void> {
         continue;
       }
 
-      client.commands.set(data.name, { data, execute });
+      client.commands.set(data.name, { data, execute, category: folder });
       Logger.debug(`Loaded command: /${data.name}`);
     }
   }
