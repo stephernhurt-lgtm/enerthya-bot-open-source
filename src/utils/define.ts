@@ -97,6 +97,7 @@ export interface CommandConfig {
   description: string;
   defaultMemberPermissions?: bigint;
   dmPermission?: boolean;
+  ownerOnly?: boolean;
   options?: OptionConfig[];
   subcommands?: SubConfig[];
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
@@ -166,6 +167,20 @@ export function defineCommand(config: CommandConfig): CommandResult {
     builder.setDefaultMemberPermissions(config.defaultMemberPermissions);
   if (config.dmPermission !== undefined) builder.setDMPermission(config.dmPermission);
 
+  const originalExecute = config.execute;
+  const execute = config.ownerOnly
+    ? async (interaction: any) => {
+        if (!isOwner(interaction.user.id)) {
+          await interaction.reply({
+            content: '❌ Only the bot owner can use this.',
+            ephemeral: true,
+          });
+          return;
+        }
+        await originalExecute(interaction);
+      }
+    : originalExecute;
+
   if (config.subcommands) {
     for (const sub of config.subcommands) {
       const subBuilder = new SlashCommandSubcommandBuilder()
@@ -177,5 +192,5 @@ export function defineCommand(config: CommandConfig): CommandResult {
   }
   if (config.options) for (const opt of config.options) addOption(builder, opt);
 
-  return { data: builder, execute: config.execute };
+  return { data: builder, execute };
 }
