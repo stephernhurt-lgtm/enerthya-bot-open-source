@@ -2,6 +2,7 @@ import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { defineCommand } from '../../utils/define.js';
 import { Giveaway } from '../../db/schemas/giveaway.js';
 import { Logger } from '../../core/Logger.js';
+import { timestamp } from '../../utils/time.js';
 
 export default defineCommand({
   name: 'giveaway',
@@ -62,7 +63,7 @@ export default defineCommand({
         .setTitle('🎁 Giveaway')
         .setDescription(`**${prize}**`)
         .addFields(
-          { name: 'Ends', value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
+          { name: 'Ends', value: timestamp(endsAt, 'R'), inline: true },
           { name: 'Winners', value: `${winnerCount}`, inline: true },
           { name: 'Hosted by', value: interaction.user.toString(), inline: true },
         )
