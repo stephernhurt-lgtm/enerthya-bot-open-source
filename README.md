@@ -162,12 +162,45 @@ MIT — use it, modify it, ship it. See [LICENSE](./LICENSE).
 
 Found a bug? Want a feature? Open an issue or pull request.
 
+### ⚠️ Important
+
+Any code submitted must be **tested by you** before opening a pull request. The `develop` branch is used for both testing and as the stable release branch — every merge must keep it production-ready.
+
 ### Branch flow
 
 ```
-develop  ←── PRs (all contributions go here first)
+develop  ←── PRs (all contributions go here)
     │
     └──→ main (stable releases)
 ```
 
-All pull requests should target the **`develop`** branch. Changes are tested on `develop` before being merged into `main` for release.
+### ✅ Before submitting a PR
+
+Run these checks locally:
+
+```bash
+# 1. TypeScript type check — must have ZERO errors
+npx tsc --noEmit
+
+# 2. Build — must compile successfully
+yarn build
+```
+
+**Attach a screenshot** of the test results in your PR description showing the commands ran successfully.
+
+### 📸 PR test example
+
+Include in your PR a screenshot or code block like:
+
+````
+## Test Results
+
+```
+npx tsc --noEmit  →  PASS (zero errors)
+yarn build        →  PASS (Done in 2.03s.)
+```
+
+✅ Type check and build passed.
+````
+
+> PRs without test evidence will be reviewed but may take longer to merge.
