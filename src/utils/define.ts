@@ -12,6 +12,7 @@ import {
 } from 'discord.js';
 import { isOwner } from './owner.js';
 import { Perm } from './permissions.js';
+import { getCooldown } from './cooldown.js';
 
 export { Perm };
 
@@ -42,6 +43,7 @@ export interface CommandConfig {
   defaultBotPermissions?: bigint;
   dmPermission?: boolean;
   ownerOnly?: boolean;
+  cooldown?: number;
   paginate?: { title: string; itemsPerPage?: number };
   options?: OptionConfig[];
   subcommands?: SubConfig[];
@@ -126,6 +128,18 @@ export function defineCommand(config: CommandConfig): CommandResult {
     if (config.ownerOnly && !isOwner(interaction.user.id)) {
       await interaction.reply({ content: '❌ Only the bot owner can use this.', ephemeral: true });
       return;
+    }
+
+    // Cooldown check
+    if (config.cooldown) {
+      const remaining = getCooldown(interaction.user.id, config.name, config.cooldown);
+      if (remaining > 0) {
+        await interaction.reply({
+          content: `⏳ Please wait **${remaining}s** before using this again.`,
+          ephemeral: true,
+        });
+        return;
+      }
     }
 
     // Bot permission check

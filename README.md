@@ -80,12 +80,12 @@ src/
 │   ├── discord.d.ts      # Augments discord.js Client with .commands
 │   └── command.ts        # TypedCommand helper for easier command creation
 ├── services/
-│   ├── giveawayService.ts  # 🎁 Giveaway logic (Fisher-Yates draw)
-│   ├── statsService.ts     # 📊 Voice channel stats updater
-│   └── configService.ts    # ⚙️ Guild prefix helper
+│   ├── auditService.ts      # 🪵 Moderation audit logs
+│   ├── giveawayService.ts   # 🎁 Giveaway logic (Fisher-Yates draw)
+│   ├── statsService.ts      # 📊 Voice channel stats updater
+│   └── configService.ts     # ⚙️ Guild prefix helper
 ├── utils/
 │   ├── cooldown.ts       # Command cooldowns
-│   ├── audit.ts          # Moderation audit logs
 │   ├── define.ts         # ✨ defineCommand + Perm + ownerOnly + paginate
 │   ├── pagination.ts     # Paginated embeds with ⬅️ ➡️ buttons
 │   ├── time.ts           # dayjs helpers (timestamps, durations)
