@@ -59,11 +59,17 @@ src/
 │   ├── schema.ts         # Model registration
 │   └── schemas/
 │       ├── guild.ts      # Guild settings model
-│       └── rolemenu.ts   # Reaction roles model
+│       └── rolemenu.ts   # 🎯 /rolemenu
+├── types/
+│   ├── index.ts          # Re-exports all types
+│   ├── env.d.ts          # Typed process.env (DISCORD_TOKEN, etc.)
+│   ├── discord.d.ts      # Augments discord.js Client with .commands
+│   └── command.ts        # TypedCommand helper for easier command creation
 ├── utils/
 │   ├── validator.ts      # Credential validator
 │   ├── cooldown.ts       # Command cooldowns
-│   └── audit.ts          # Moderation audit logs
+│   ├── audit.ts          # Moderation audit logs
+│   └── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
@@ -133,6 +139,22 @@ yarn start
 1. Create a file in `src/commands/<category>/yourcommand.ts`
 2. Export `data` (a `SlashCommandBuilder` instance) and `execute`
 3. Run `yarn build` — the loader picks it up automatically
+
+All commands are automatically typed. You can also use the `TypedCommand` helper for cleaner code:
+
+```ts
+import { command } from '../types';
+import { SlashCommandBuilder } from 'discord.js';
+
+export default command(
+  new SlashCommandBuilder().setName('hello').setDescription('Say hello!'),
+  async (interaction) => {
+    await interaction.reply('Hello, world! 👋');
+  },
+);
+```
+
+> 💡 **Tip:** Use `replyError` and `replySuccess` from `@utils/helpers` for quick ephemeral responses.
 
 ```ts
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
