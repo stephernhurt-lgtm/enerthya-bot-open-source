@@ -186,21 +186,30 @@ npx tsc --noEmit
 yarn build
 ```
 
-**Attach a screenshot** of the test results in your PR description showing the commands ran successfully.
+### 📸 Test evidence — required in every PR
 
-### 📸 PR test example
+**Every PR must include proof of testing.** This is not optional.
 
-Include in your PR a screenshot or code block like:
+For **code changes** (new commands, features, fixes):
+- A **screenshot of the feature running in Discord** (command + bot response)
+- OR a terminal screenshot showing the complete test output
 
-````
+For **non-command changes** (config, docs, refactors):
+- Terminal output showing `npx tsc --noEmit` and `yarn build` passing
+
+#### Example
+
+````markdown
 ## Test Results
 
+**Build:**
 ```
 npx tsc --noEmit  →  PASS (zero errors)
 yarn build        →  PASS (Done in 2.03s.)
 ```
 
-✅ Type check and build passed.
+**Runtime:**
+[Screenshot of the command working in Discord]
 ````
 
-> PRs without test evidence will be reviewed but may take longer to merge.
+> ⚠️ PRs **without test evidence** will be tagged as `needs-testing` and may take longer to merge.
