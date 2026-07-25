@@ -39,12 +39,20 @@ src/
 │   ├── index.ts          # Command loader
 │   ├── info/
 │   │   ├── ping.ts       # 🏓 /ping
-│   │   └── botinfo.ts    # 🤖 /botinfo
+│   │   ├── botinfo.ts    # 🤖 /botinfo
+│   │   └── help.ts       # 📖 /help
 │   └── moderation/
 │       ├── clear.ts      # 🧹 /clear
 │       ├── kick.ts       # 👢 /kick
 │       ├── ban.ts        # 🔨 /ban
 │       └── say.ts        # 💬 /say
+├── db/
+│   ├── index.ts          # MongoDB connection
+│   ├── schema.ts         # Model registration
+│   └── schemas/
+│       └── guild.ts      # Guild settings model
+├── utils/
+│   └── validator.ts      # Credential validator
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
