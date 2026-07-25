@@ -1,5 +1,5 @@
 import { ChannelType } from 'discord.js';
-import { defineCommand, Perm } from '../../utils/define.js';
+import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
 import { updateAllStats } from '../../services/statsService.js';

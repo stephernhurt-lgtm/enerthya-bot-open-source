@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { defineCommand } from '../../utils/define.js';
+import { defineCommand } from '../../utils/builders/define.js';
 
 // Mixing approaches — use defineCommand for the poll, or cmd/str for simpler cases
 export default defineCommand({

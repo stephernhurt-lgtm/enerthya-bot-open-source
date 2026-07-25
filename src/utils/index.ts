@@ -1,3 +1,3 @@
-export * from './string.js';
-export * from './array.js';
-export * from './sanitize.js';
+export * from './format/string.js';
+export * from './data/array.js';
+export * from './format/sanitize.js';

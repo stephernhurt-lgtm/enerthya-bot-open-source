@@ -10,9 +10,9 @@ import {
   ChatInputCommandInteraction,
   ChannelType,
 } from 'discord.js';
-import { isOwner } from './owner.js';
+import { isOwner } from '../system/owner.js';
 import { Perm } from './permissions.js';
-import { getCooldown } from './cooldown.js';
+import { getCooldown } from '../system/cooldown.js';
 
 export { Perm };
 
@@ -156,7 +156,7 @@ export function defineCommand(config: CommandConfig): CommandResult {
 
     const result = await originalExecute(interaction);
     if (paginateConfig && Array.isArray(result) && result.length > 0) {
-      const { paginate } = await import('./pagination.js');
+      const { paginate } = await import('../data/pagination.js');
       await paginate(interaction, paginateConfig.title, result, paginateConfig.itemsPerPage ?? 5);
     }
   };

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getCooldown, clearCooldowns } from './cooldown';
+import { getCooldown, clearCooldowns } from './system/cooldown.js';
 
 describe('getCooldown', () => {
   const userId = '123456789';

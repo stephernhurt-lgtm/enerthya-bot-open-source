@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { defineCommand } from '../../utils/define.js';
+import { defineCommand } from '../../utils/builders/define.js';
 
 export default defineCommand({
   name: 'uptime',

@@ -1,5 +1,5 @@
-import { config } from '../config/index.js';
-import { Logger } from '../core/Logger.js';
+import { config } from '../../config/index.js';
+import { Logger } from '../../core/Logger.js';
 
 /** Send an error report to the configured Discord webhook. */
 export async function reportError(context: string, error: Error): Promise<void> {

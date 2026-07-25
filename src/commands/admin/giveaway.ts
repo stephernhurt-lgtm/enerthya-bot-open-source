@@ -1,8 +1,8 @@
 import { EmbedBuilder } from 'discord.js';
-import { defineCommand, Perm } from '../../utils/define.js';
+import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Giveaway } from '../../db/schemas/giveaway.js';
 import { Logger } from '../../core/Logger.js';
-import { timestamp } from '../../utils/time.js';
+import { timestamp } from '../../utils/format/time.js';
 import { endGiveaway } from '../../services/giveawayService.js';
 
 export default defineCommand({

@@ -1,7 +1,7 @@
 import { REST, Routes } from 'discord.js';
-import { config } from '../config/index.js';
-import { Logger } from '../core/Logger.js';
-import type { BotClient } from '../core/Client.js';
+import { config } from '../../config/index.js';
+import { Logger } from '../../core/Logger.js';
+import type { BotClient } from '../../core/Client.js';
 
 /**
  * Deploy slash commands to Discord.

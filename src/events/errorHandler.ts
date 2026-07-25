@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 import { Logger } from '../core/Logger.js';
-import { reportError } from '../utils/errorReporter.js';
+import { reportError } from '../utils/system/errorReporter.js';
 
 export default {
   name: Events.Error,

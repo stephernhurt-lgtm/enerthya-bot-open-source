@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { defineCommand, Perm } from '../../utils/define.js';
+import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Logger } from '../../core/Logger.js';
 import { getAuditChannel, sendAudit } from '../../services/auditService.js';
 
