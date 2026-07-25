@@ -32,7 +32,7 @@ async function main() {
   await client.start(config.token);
 }
 
-main().catch(err => {
+main().catch((err) => {
   Logger.error('Fatal error:', err);
   process.exit(1);
 });

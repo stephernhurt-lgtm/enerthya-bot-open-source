@@ -20,9 +20,7 @@ export default {
       return;
     }
 
-    Logger.info(
-      `/${interaction.commandName} — ${interaction.user.tag} (${interaction.user.id})`
-    );
+    Logger.info(`/${interaction.commandName} — ${interaction.user.tag} (${interaction.user.id})`);
 
     try {
       await command.execute(interaction);

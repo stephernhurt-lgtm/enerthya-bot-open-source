@@ -10,19 +10,13 @@ export const data = new SlashCommandBuilder()
   .setName('ban')
   .setDescription('Ban a member from the server.')
   .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-  .addUserOption(option =>
-    option
-      .setName('target')
-      .setDescription('The member to ban.')
-      .setRequired(true),
+  .addUserOption((option) =>
+    option.setName('target').setDescription('The member to ban.').setRequired(true),
   )
-  .addStringOption(option =>
-    option
-      .setName('reason')
-      .setDescription('Reason for the ban.')
-      .setMaxLength(512),
+  .addStringOption((option) =>
+    option.setName('reason').setDescription('Reason for the ban.').setMaxLength(512),
   )
-  .addIntegerOption(option =>
+  .addIntegerOption((option) =>
     option
       .setName('delete_messages')
       .setDescription('Delete recent messages (0–7 days).')
@@ -36,7 +30,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const deleteDays = interaction.options.getInteger('delete_messages') ?? 0;
 
   if (!interaction.guild) {
-    await interaction.reply({ content: '❌ This command can only be used in a server.', ephemeral: true });
+    await interaction.reply({
+      content: '❌ This command can only be used in a server.',
+      ephemeral: true,
+    });
     return;
   }
 
@@ -54,10 +51,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
   if (
     interaction.member &&
-    member.roles.highest.position >=
-      (interaction.member as any).roles.highest.position
+    member.roles.highest.position >= (interaction.member as any).roles.highest.position
   ) {
-    await interaction.reply({ content: '❌ You cannot ban someone with an equal or higher role.', ephemeral: true });
+    await interaction.reply({
+      content: '❌ You cannot ban someone with an equal or higher role.',
+      ephemeral: true,
+    });
     return;
   }
 
@@ -70,7 +69,11 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     .addFields(
       { name: 'User', value: `${target.tag} (${target.id})`, inline: true },
       { name: 'Reason', value: reason, inline: true },
-      { name: 'Messages Deleted', value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None', inline: true },
+      {
+        name: 'Messages Deleted',
+        value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
+        inline: true,
+      },
     )
     .setTimestamp();
 

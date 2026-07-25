@@ -6,13 +6,13 @@ import type { BotClient } from '@core/Client';
 export async function loadCommands(client: BotClient): Promise<void> {
   const commandsPath = join(__dirname);
   const folders = readdirSync(commandsPath).filter(
-    f => !f.includes('.') && f !== 'index.ts' && f !== 'index.js',
+    (f) => !f.includes('.') && f !== 'index.ts' && f !== 'index.js',
   );
 
   for (const folder of folders) {
     const folderPath = join(commandsPath, folder);
     const commandFiles = readdirSync(folderPath).filter(
-      f => f.endsWith('.ts') || f.endsWith('.js'),
+      (f) => f.endsWith('.ts') || f.endsWith('.js'),
     );
 
     for (const file of commandFiles) {

@@ -9,10 +9,10 @@ type LogLevel = (typeof LOG_LEVELS)[number];
 /* ─── Colors ─── */
 
 const colors: Record<LogLevel, string> = {
-  debug: '\x1b[90m',  // gray
-  info: '\x1b[36m',   // cyan
-  warn: '\x1b[33m',   // yellow
-  error: '\x1b[31m',  // red
+  debug: '\x1b[90m', // gray
+  info: '\x1b[36m', // cyan
+  warn: '\x1b[33m', // yellow
+  error: '\x1b[31m', // red
 };
 
 const levelTags: Record<LogLevel, string> = {
@@ -55,7 +55,9 @@ function timestamp(): string {
 }
 
 function formatLine(level: LogLevel, ...args: unknown[]): string {
-  const msg = args.map(a => (typeof a === 'object' ? JSON.stringify(a, null, 0) : String(a))).join(' ');
+  const msg = args
+    .map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 0) : String(a)))
+    .join(' ');
   return `${timestamp()} [${levelTags[level]}] ${msg}`;
 }
 
@@ -67,7 +69,7 @@ function write(level: LogLevel, ...args: unknown[]): void {
   // Console output with color
   const prefix = `${colors[level]}${timestamp()} [${levelTags[level]}]${reset}`;
   const formatted = args
-    .map(a => (typeof a === 'object' ? JSON.stringify(a, null, 0) : String(a)))
+    .map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 0) : String(a)))
     .join(' ');
 
   const method = level === 'error' ? console.error : console.log;
@@ -93,7 +95,9 @@ export const Logger = {
   green: (...args: unknown[]) => {
     const line = formatLine('info', ...args);
     const prefix = `${'\x1b[38;5;40m'}${timestamp()} [  OK]${reset}`;
-    const formatted = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+    const formatted = args
+      .map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
+      .join(' ');
     console.log(prefix, formatted);
     try {
       appendFileSync(getLogFile(), `${line}\n`, 'utf-8');

@@ -22,10 +22,19 @@ export function validateCredentials(): ValidationResult {
   // ── DISCORD_TOKEN ──
   const token = config.token;
   if (!token) {
-    checks.push({ name: 'DISCORD_TOKEN', passed: false, hint: 'Required — get it from https://discord.com/developers/applications' });
+    checks.push({
+      name: 'DISCORD_TOKEN',
+      passed: false,
+      hint: 'Required — get it from https://discord.com/developers/applications',
+    });
     allPassed = false;
   } else if (token.length < 60) {
-    checks.push({ name: 'DISCORD_TOKEN', passed: false, value: token.slice(0, 10) + '...', hint: 'Looks too short for a valid bot token' });
+    checks.push({
+      name: 'DISCORD_TOKEN',
+      passed: false,
+      value: token.slice(0, 10) + '...',
+      hint: 'Looks too short for a valid bot token',
+    });
     allPassed = false;
   } else {
     checks.push({ name: 'DISCORD_TOKEN', passed: true, value: token.slice(0, 10) + '...' });
@@ -34,10 +43,19 @@ export function validateCredentials(): ValidationResult {
   // ── CLIENT_ID ──
   const clientId = config.clientId;
   if (!clientId) {
-    checks.push({ name: 'CLIENT_ID', passed: false, hint: 'Required — get it from Discord Developer Portal → OAuth2' });
+    checks.push({
+      name: 'CLIENT_ID',
+      passed: false,
+      hint: 'Required — get it from Discord Developer Portal → OAuth2',
+    });
     allPassed = false;
   } else if (!/^\d{17,20}$/.test(clientId)) {
-    checks.push({ name: 'CLIENT_ID', passed: false, value: clientId, hint: 'Should be a 17–20 digit numeric snowflake' });
+    checks.push({
+      name: 'CLIENT_ID',
+      passed: false,
+      value: clientId,
+      hint: 'Should be a 17–20 digit numeric snowflake',
+    });
     allPassed = false;
   } else {
     checks.push({ name: 'CLIENT_ID', passed: true, value: clientId });
@@ -46,13 +64,26 @@ export function validateCredentials(): ValidationResult {
   // ── MONGO_URI ──
   const mongoUri = config.mongoUri;
   if (!mongoUri) {
-    checks.push({ name: 'MONGO_URI', passed: false, hint: 'Required — use mongodb://localhost:27017/bot or MongoDB Atlas' });
+    checks.push({
+      name: 'MONGO_URI',
+      passed: false,
+      hint: 'Required — use mongodb://localhost:27017/bot or MongoDB Atlas',
+    });
     allPassed = false;
   } else if (!mongoUri.startsWith('mongodb://') && !mongoUri.startsWith('mongodb+srv://')) {
-    checks.push({ name: 'MONGO_URI', passed: false, value: mongoUri.slice(0, 20) + '...', hint: 'Must start with mongodb:// or mongodb+srv://' });
+    checks.push({
+      name: 'MONGO_URI',
+      passed: false,
+      value: mongoUri.slice(0, 20) + '...',
+      hint: 'Must start with mongodb:// or mongodb+srv://',
+    });
     allPassed = false;
   } else {
-    checks.push({ name: 'MONGO_URI', passed: true, value: mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//****:****@') });
+    checks.push({
+      name: 'MONGO_URI',
+      passed: true,
+      value: mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//****:****@'),
+    });
   }
 
   // ── GUILD_ID (optional) ──
@@ -61,7 +92,12 @@ export function validateCredentials(): ValidationResult {
     if (/^\d{17,20}$/.test(guildId)) {
       checks.push({ name: 'GUILD_ID', passed: true, value: guildId });
     } else {
-      checks.push({ name: 'GUILD_ID', passed: false, value: guildId, hint: 'Should be a 17–20 digit numeric snowflake' });
+      checks.push({
+        name: 'GUILD_ID',
+        passed: false,
+        value: guildId,
+        hint: 'Should be a 17–20 digit numeric snowflake',
+      });
       allPassed = false;
     }
   } else {

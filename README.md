@@ -16,11 +16,17 @@ A **modular, open-source** Discord bot built with **discord.js v14** and **TypeS
 - ⚡ **Slash commands** — fully typed, guild or global deployment
 - 🧩 **Modular structure** — drop in new commands and events without touching core files
 - 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
-- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`
+- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`
 - 📊 **Info commands** — `/ping`, `/botinfo`, `/help`
-- 🧹 **Clean logging** — no `console.log`, structured `Logger` with colours
+- 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
 - 🗄️ **MongoDB** — Mongoose ODM built-in, ready for persistent data
+- 🛑 **Cooldowns** — anti-spam integrado nos comandos
+- 👋 **Welcome system** — customizable join messages per guild
+- 🚨 **Global error handler** — catches crashes and logs them
+- ✅ **Pre-commit hooks** — Husky + lint-staged: auto-format + type-check before every commit
+- 🎨 **Prettier** — consistent code style across all contributors
+- ⚙️ **VS Code settings** — recommended extensions and formatter config
 
 ---
 
@@ -45,18 +51,22 @@ src/
 │       ├── clear.ts      # 🧹 /clear
 │       ├── kick.ts       # 👢 /kick
 │       ├── ban.ts        # 🔨 /ban
-│       └── say.ts        # 💬 /say
+│       ├── say.ts        # 💬 /say
+│       └── config.ts     # ⚙️ /config
 ├── db/
 │   ├── index.ts          # MongoDB connection
 │   ├── schema.ts         # Model registration
 │   └── schemas/
 │       └── guild.ts      # Guild settings model
 ├── utils/
-│   └── validator.ts      # Credential validator
+│   ├── validator.ts      # Credential validator
+│   └── cooldown.ts       # Command cooldowns
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
-    └── interactionCreate.ts  # Slash command handler
+    ├── interactionCreate.ts  # Slash command handler
+    ├── errorHandler.ts   # Global error handling
+    └── guildMemberAdd.ts # 👋 Welcome messages
 ```
 
 ---

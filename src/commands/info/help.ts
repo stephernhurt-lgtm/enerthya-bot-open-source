@@ -1,8 +1,4 @@
-import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
-  EmbedBuilder,
-} from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { BotClient, BotCommand } from '@core/Client';
 
 const categoryEmojis: Record<string, string> = {
@@ -34,7 +30,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   for (const [category, commands] of grouped) {
     const emoji = categoryEmojis[category] ?? '📁';
     const list = commands
-      .map(c => {
+      .map((c) => {
         const cmdData = c.data as any;
         return `/${cmdData.name} — ${cmdData.description ?? 'No description'}`;
       })
