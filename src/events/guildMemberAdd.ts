@@ -2,6 +2,7 @@ import { Events, EmbedBuilder } from 'discord.js';
 import { Guild } from '@db/schemas/guild';
 import { Logger } from '@core/Logger';
 import type { BotClient } from '@core/Client';
+import { updateAllStats } from '@commands/moderation/stats';
 
 export default {
   name: Events.GuildMemberAdd,
@@ -35,6 +36,12 @@ export default {
       Logger.info(`Welcome message sent to ${member.user.tag} in ${member.guild.name}`);
     } catch (error) {
       Logger.error(`Welcome error for ${member.user?.tag}:`, error);
+    }
+
+    try {
+      await updateAllStats(member.guild);
+    } catch {
+      /* stats update is best-effort */
     }
   },
 };
