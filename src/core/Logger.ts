@@ -1,18 +1,9 @@
 import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import chalk from 'chalk';
 
 const LOG_LEVELS = ['debug', 'info', 'warn', 'error'] as const;
 type LogLevel = (typeof LOG_LEVELS)[number];
-
-const colors: Record<LogLevel, string> = {
-  debug: '\x1b[90m',
-  info: '\x1b[36m',
-  warn: '\x1b[33m',
-  error: '\x1b[31m',
-};
-
-const reset = '\x1b[0m';
-const bold = '\x1b[1m';
 
 const logDir = join(process.cwd(), 'logs');
 if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true });
@@ -33,11 +24,16 @@ function write(level: LogLevel, ...args: unknown[]): void {
   const tag = level.toUpperCase().padEnd(5);
   const line = `${time} [${tag}] ${msg}`;
 
-  // Console
-  const method = level === 'error' ? console.error : console.log;
-  method(`${colors[level]}${time} [${tag}]${reset} ${msg}`);
+  const colorMap: Record<LogLevel, chalk.Chalk> = {
+    debug: chalk.gray,
+    info: chalk.cyan,
+    warn: chalk.yellow,
+    error: chalk.red,
+  };
 
-  // File — per level
+  const method = level === 'error' ? console.error : console.log;
+  method(`${colorMap[level](`${time} [${tag}]`)} ${msg}`);
+
   try {
     appendFileSync(join(logDir, `${level}.log`), `${line}\n`, 'utf-8');
     appendFileSync(join(logDir, 'combined.log'), `${line}\n`, 'utf-8');
@@ -54,7 +50,7 @@ export const Logger = {
     const msg = formatMsg(...args);
     const time = timestamp();
     const line = `${time} [ OK ] ${msg}`;
-    console.log(`${'\x1b[38;5;40m'}${time} [ OK ]${reset} ${msg}`);
+    console.log(`${chalk.green(`${time} [ OK ]`)} ${msg}`);
     try {
       appendFileSync(join(logDir, 'info.log'), `${line}\n`, 'utf-8');
       appendFileSync(join(logDir, 'combined.log'), `${line}\n`, 'utf-8');
@@ -62,17 +58,17 @@ export const Logger = {
   },
 
   divider: () => {
-    const line = '─'.repeat(60);
+    const line = chalk.dim('─'.repeat(60));
     console.log(line);
     try {
-      appendFileSync(join(logDir, 'info.log'), `${line}\n`, 'utf-8');
-      appendFileSync(join(logDir, 'combined.log'), `${line}\n`, 'utf-8');
+      appendFileSync(join(logDir, 'info.log'), `${'─'.repeat(60)}\n`, 'utf-8');
+      appendFileSync(join(logDir, 'combined.log'), `${'─'.repeat(60)}\n`, 'utf-8');
     } catch {}
   },
 
   section: (title: string) => {
     Logger.divider();
-    console.log(`${bold}${title}${reset}`);
+    console.log(chalk.bold(title));
     Logger.divider();
   },
 };
