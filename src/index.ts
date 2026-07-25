@@ -9,7 +9,7 @@ import { initSchema } from '@db/schema';
 import { validateCredentials } from '@utils/validator';
 
 async function main() {
-  Logger.section('ENERTHYA BOT — OPEN SOURCE');
+  Logger.section('ENERTHYA BOT');
 
   // Validate all credentials before starting
   const { valid } = validateCredentials();

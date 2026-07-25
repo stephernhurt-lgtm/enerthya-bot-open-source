@@ -1,6 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
 import { defineCommand } from '../../utils/define.js';
-import { isOwner } from '../../utils/owner.js';
 
 export default defineCommand({
   name: 'credits',
@@ -8,10 +7,10 @@ export default defineCommand({
   execute: async (interaction) => {
     const embed = new EmbedBuilder()
       .setColor(0x2b2d31)
-      .setTitle('⭐ Enerthya Bot — Open Source')
+      .setTitle('⭐ Enerthya Bot')
       .setDescription(
         'A modular Discord bot built with **discord.js v14** and **TypeScript**.\n\n' +
-          'This bot is **open source** and free to use, modify, and distribute.\n\n' +
+          'The bot is **public** and contributions are welcome!\n\n' +
           '🔗 [GitHub Repository](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source)\n' +
           '📝 License: MIT\n' +
           '👤 Built by [@stephernhurt-lgtm](https://github.com/stephernhurt-lgtm)',
@@ -23,7 +22,7 @@ export default defineCommand({
           value: `${(interaction.client as any).commands?.size ?? '?'} total`,
         },
       )
-      .setFooter({ text: 'Enerthya Bot — Open Source' })
+      .setFooter({ text: 'Enerthya Bot' })
       .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });

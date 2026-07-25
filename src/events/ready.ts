@@ -15,7 +15,7 @@ export default {
     Logger.info(`Commands:   ${client.commands.size}`);
     Logger.green('Bot is online and ready!');
     if (client.user) {
-      const activities = ['/help', 'open-source', 'discord.js v14'];
+      const activities = ['/help', 'discord.js v14', 'Enerthya Bot'];
       let i = 0;
       setInterval(() => {
         client.user?.setActivity(activities[i % activities.length]);

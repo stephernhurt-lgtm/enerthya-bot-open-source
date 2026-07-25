@@ -14,17 +14,16 @@ export default defineCommand({
       .setColor(0x2b2d31)
       .setAuthor({ name: client.user?.username ?? 'Bot', iconURL: client.user?.displayAvatarURL() })
       .setDescription(
-        'A modular, open-source Discord bot built with discord.js v14.\n\n_Open source contribution by [Enerthya](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source)_',
+        'A modular Discord bot built with discord.js v14.\n\n_Contributions welcome — [GitHub](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source)_',
       )
       .addFields(
         { name: '⏱️ Uptime', value: formatDuration(client.uptime ?? 0), inline: true },
         { name: '🛠 Commands', value: `${client.commands.size}`, inline: true },
         { name: '🏠 Servers', value: `${client.guilds.cache.size}`, inline: true },
       )
-      .setFooter({ text: 'Enerthya Bot — Open Source' })
+      .setFooter({ text: 'Enerthya Bot' })
       .setTimestamp();
 
-    // Owner-only: extra info
     if (owner) {
       embed.addFields(
         { name: '🤖 Owner', value: `<@${client.application?.owner?.id ?? '?'}>`, inline: true },

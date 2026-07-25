@@ -34,7 +34,7 @@ export default defineCommand({
       });
     }
 
-    embed.setFooter({ text: 'Enerthya Bot — Open Source' });
+    embed.setFooter({ text: 'Enerthya Bot' });
     await interaction.reply({ embeds: [embed] });
   },
 });
