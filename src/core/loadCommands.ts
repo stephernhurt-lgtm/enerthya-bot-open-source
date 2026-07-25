@@ -9,19 +9,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const commandsPath = join(__dirname, '..', 'commands');
 
 export async function loadCommands(client: BotClient): Promise<void> {
-  const folders = readdirSync(commandsPath).filter(
-    (f) => !f.includes('.') && f !== 'index.ts' && f !== 'index.js',
-  );
+  const folders = readdirSync(commandsPath).filter((f) => !f.includes('.'));
 
   for (const folder of folders) {
     const folderPath = join(commandsPath, folder);
-    const commandFiles = readdirSync(folderPath).filter(
-      (f) => f.endsWith('.ts') || f.endsWith('.js'),
-    );
+    const commandFiles = readdirSync(folderPath).filter((f) => f.endsWith('.js'));
 
     for (const file of commandFiles) {
       const command = await import(join(folderPath, file));
-      const { data, execute, prefixExecute } = command;
+      const { data, execute, prefixExecute } = command.default ?? command;
 
       if (!data || !execute) {
         Logger.warn(`Command at ${folder}/${file} is missing data or execute.`);

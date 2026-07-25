@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const eventsPath = join(__dirname, '..', 'events');
 
 export async function loadEvents(client: BotClient): Promise<void> {
-  const eventFiles = readdirSync(eventsPath).filter((f) => f.endsWith('.ts') || f.endsWith('.js'));
+  const eventFiles = readdirSync(eventsPath).filter((f) => f.endsWith('.js'));
 
   for (const file of eventFiles) {
     const event = await import(join(eventsPath, file));
