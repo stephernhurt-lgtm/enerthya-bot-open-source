@@ -72,12 +72,6 @@ export async function paginated(
   await paginate(interaction, title, items, itemsPerPage);
 }
 
-// ─── Autocomplete helper ───
-
-export function autocomplete(name: string, description: string) {
-  return { type: 'string' as const, name, description, required: true, autocomplete: true };
-}
-
 // ─── defineCommand — Discord JSON-style config ───
 
 type OptionType = 'string' | 'integer' | 'boolean' | 'user' | 'channel' | 'role';
