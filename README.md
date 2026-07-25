@@ -1,13 +1,13 @@
-# 🤖 Enerthya Bot — Open Source
+# 🤖 Enerthya Bot
 
 ![CI](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/github/license/stephernhurt-lgtm/enerthya-bot-open-source?color=blue&label=AGPL)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/discord.js-v14-5865F2?logo=discord)
 
-A **modular, open-source** Discord bot built with **discord.js v14** and **TypeScript**. Ready to deploy, easy to extend — perfect as a base for your own bot.
+A modular Discord bot built with **discord.js v14** and **TypeScript**. This is the official **Enerthya Bot** repository — the code is public for transparency and contributions.
 
-> Built by [@stephernhurt-lgtm](https://github.com/stephernhurt-lgtm)
+> Built by [@stephernhurt-lgtm](https://github.com/stephernhurt-lgtm). Contributions welcome via pull requests.
 
 ---
 
