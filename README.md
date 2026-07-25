@@ -74,8 +74,7 @@ src/
 │   ├── cooldown.ts       # Command cooldowns
 │   ├── audit.ts          # Moderation audit logs
 │   ├── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
-│   ├── builder.ts        # ✨ Quick builders (cmd, str, usr, simple, dual, ownerOnly)
-│   ├── define.ts         # defineCommand() — Discord JSON-style config
+│   ├── define.ts         # ✨ Everything: defineCommand + cmd/str/usr/dual/ownerOnly/paginated
 │   ├── pagination.ts     # Paginated embeds with ⬅️ ➡️ buttons
 │   ├── time.ts           # dayjs helpers (timestamps, durations)
 │   ├── env.ts            # Zod env validation
