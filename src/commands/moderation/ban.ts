@@ -1,96 +1,75 @@
-import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
-  PermissionFlagsBits,
-  EmbedBuilder,
-} from 'discord.js';
-import { Logger } from '@core/Logger';
-import { getAuditChannel, sendAudit } from '@utils/audit';
+import { PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { defineCommand } from '../../utils/define.js';
+import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('ban')
-  .setDescription('Ban a member from the server.')
-  .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-  .addUserOption((option) =>
-    option.setName('target').setDescription('The member to ban.').setRequired(true),
-  )
-  .addStringOption((option) =>
-    option.setName('reason').setDescription('Reason for the ban.').setMaxLength(512),
-  )
-  .addIntegerOption((option) =>
-    option
-      .setName('delete_messages')
-      .setDescription('Delete recent messages (0–7 days).')
-      .setMinValue(0)
-      .setMaxValue(7),
-  );
+export default defineCommand({
+  name: 'ban',
+  description: 'Ban a member from the server.',
+  defaultMemberPermissions: PermissionFlagsBits.BanMembers,
+  options: [
+    { type: 'user', name: 'target', description: 'The member to ban', required: true },
+    { type: 'string', name: 'reason', description: 'Reason for the ban', max: 512 },
+    {
+      type: 'integer',
+      name: 'delete_messages',
+      description: 'Delete recent messages (0–7 days)',
+      min: 0,
+      max: 7,
+    },
+  ],
+  execute: async (interaction) => {
+    const target = interaction.options.getUser('target', true);
+    const reason = interaction.options.getString('reason') ?? 'No reason provided.';
+    const deleteDays = interaction.options.getInteger('delete_messages') ?? 0;
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  const target = interaction.options.getUser('target', true);
-  const reason = interaction.options.getString('reason') ?? 'No reason provided.';
-  const deleteDays = interaction.options.getInteger('delete_messages') ?? 0;
+    if (!interaction.guild) {
+      await interaction.reply({ content: '❌ Server only.', ephemeral: true });
+      return;
+    }
 
-  if (!interaction.guild) {
-    await interaction.reply({
-      content: '❌ This command can only be used in a server.',
-      ephemeral: true,
-    });
-    return;
-  }
+    const member = await interaction.guild.members.fetch(target.id).catch(() => null);
+    if (!member) {
+      await interaction.reply({ content: '❌ Not in this server.', ephemeral: true });
+      return;
+    }
 
-  const member = await interaction.guild.members.fetch(target.id).catch(() => null);
+    if (!member.bannable) {
+      await interaction.reply({ content: '❌ I cannot ban that member.', ephemeral: true });
+      return;
+    }
 
-  if (!member) {
-    await interaction.reply({ content: '❌ That user is not in this server.', ephemeral: true });
-    return;
-  }
+    await member.ban({ reason, deleteMessageDays: deleteDays });
 
-  if (!member.bannable) {
-    await interaction.reply({ content: '❌ I cannot ban that member.', ephemeral: true });
-    return;
-  }
+    const { EmbedBuilder } = await import('discord.js');
+    const embed = new EmbedBuilder()
+      .setColor(0x2b2d31)
+      .setTitle('🔨 Member Banned')
+      .addFields(
+        { name: 'User', value: `${target.tag} (${target.id})`, inline: true },
+        { name: 'Reason', value: reason, inline: true },
+        {
+          name: 'Messages Deleted',
+          value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
+          inline: true,
+        },
+      )
+      .setTimestamp();
 
-  if (
-    interaction.member &&
-    member.roles.highest.position >= (interaction.member as any).roles.highest.position
-  ) {
-    await interaction.reply({
-      content: '❌ You cannot ban someone with an equal or higher role.',
-      ephemeral: true,
-    });
-    return;
-  }
+    await interaction.reply({ embeds: [embed] });
 
-  await member.ban({ reason, deleteMessageDays: deleteDays });
-  Logger.info(`Banned ${target.tag} | Reason: ${reason} | Delete days: ${deleteDays}`);
-
-  const embed = new EmbedBuilder()
-    .setColor(0x2b2d31)
-    .setTitle('🔨 Member Banned')
-    .addFields(
-      { name: 'User', value: `${target.tag} (${target.id})`, inline: true },
-      { name: 'Reason', value: reason, inline: true },
-      {
-        name: 'Messages Deleted',
-        value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
-        inline: true,
-      },
-    )
-    .setTimestamp();
-
-  await interaction.reply({ embeds: [embed] });
-
-  const auditCh = await getAuditChannel(interaction.guild.id, interaction.client.channels);
-  if (auditCh) {
-    await sendAudit(auditCh, 'ban', [
-      { name: 'Target', value: `${target.tag} (${target.id})`, inline: true },
-      { name: 'Reason', value: reason, inline: true },
-      {
-        name: 'Messages Deleted',
-        value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
-        inline: true,
-      },
-      { name: 'Moderator', value: interaction.user.tag },
-    ]);
-  }
-}
+    // Audit log
+    const auditCh = await getAuditChannel(interaction.guild.id, interaction.client.channels);
+    if (auditCh) {
+      await sendAudit(auditCh, 'ban', [
+        { name: 'Target', value: `${target.tag} (${target.id})`, inline: true },
+        { name: 'Reason', value: reason, inline: true },
+        {
+          name: 'Messages Deleted',
+          value: deleteDays > 0 ? `${deleteDays} day(s)` : 'None',
+          inline: true,
+        },
+        { name: 'Moderator', value: interaction.user.tag },
+      ]);
+    }
+  },
+});

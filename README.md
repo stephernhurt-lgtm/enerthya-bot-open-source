@@ -180,6 +180,33 @@ export async function execute(interaction) { /* ... */ }
 | `ch(name, desc, required?)` | Channel option |
 | `simple(name, desc, handler)` | Returns `{ data, execute }` ready to export |
 | `dual(name, desc, slashHandler, prefixHandler?)` | Command that works with **both** `/slash` and `!prefix` |
+| `defineCommand(config)` | Discord JSON-style config → full command |
+
+### 📋 Discord JSON-style commands
+
+Use `defineCommand()` with a config object that mirrors Discord's official API structure:
+
+```ts
+import { defineCommand } from '../utils/define';
+
+export default defineCommand({
+  name: 'ban',
+  description: 'Ban a member',
+  defaultMemberPermissions: PermissionFlagsBits.BanMembers,
+  options: [
+    { type: 'user',    name: 'target',       description: 'Who to ban',  required: true },
+    { type: 'string',  name: 'reason',       description: 'Why' },
+    { type: 'integer', name: 'delete_messages', description: 'Delete recent messages', min: 0, max: 7 },
+  ],
+  execute: async (interaction) => {
+    const user = interaction.options.getUser('target', true);
+    await interaction.guild?.members.ban(user);
+    await interaction.reply(`🔨 Banned ${user.tag}`);
+  },
+});
+```
+
+This matches how Discord documents commands in their developer portal — clean, flat, no chaining.
 
 ### ⚡ Prefix commands
 
