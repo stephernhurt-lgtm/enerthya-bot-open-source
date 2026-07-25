@@ -16,7 +16,8 @@ A modular Discord bot built with **discord.js v14** and **TypeScript**. This is 
 - ⚡ **Slash commands** — fully typed, guild or global deployment
 - 🧩 **Modular structure** — drop in new commands and events without touching core files
 - 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
-- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`, `/rolemenu`, `/stats`, `/autorole`, `/slowmode`, `/giveaway`
+- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/slowmode`
+- ⚙️ **Admin tools** — `/config`, `/giveaway`, `/autorole`, `/rolemenu`, `/stats`
 - 📊 **Info commands** — `/ping`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`
 - 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
@@ -56,8 +57,13 @@ src/
 │       ├── kick.ts       # 👢 /kick
 │       ├── ban.ts        # 🔨 /ban
 │       ├── say.ts        # 💬 /say
-│       ├── config.ts     # ⚙️ /config
-│       └── rolemenu.ts   # 🎯 /rolemenu
+│       └── slowmode.ts   # ⏱️ /slowmode
+├── admin/
+│   ├── config.ts       # ⚙️ /config
+│   ├── giveaway.ts     # 🎁 /giveaway
+│   ├── autorole.ts     # 🎭 /autorole
+│   ├── rolemenu.ts     # 🎯 /rolemenu
+│   └── stats.ts        # 📊 /stats
 ├── db/
 │   ├── index.ts          # MongoDB connection
 │   ├── schema.ts         # Model registration

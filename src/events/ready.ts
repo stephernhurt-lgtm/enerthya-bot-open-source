@@ -2,7 +2,7 @@ import { Events } from 'discord.js';
 import { Giveaway } from '../db/schemas/giveaway.js';
 import { Logger } from '../core/Logger.js';
 import type { BotClient } from '../core/Client.js';
-import { endGiveaway } from '../commands/moderation/giveaway.js';
+import { endGiveaway } from '../commands/admin/giveaway.js';
 
 export default {
   name: Events.ClientReady,

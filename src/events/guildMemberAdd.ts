@@ -41,7 +41,7 @@ export default {
       }
 
       // Stats update
-      const { updateAllStats } = await import('../commands/moderation/stats.js');
+      const { updateAllStats } = await import('../commands/admin/stats.js');
       await updateAllStats(member.guild).catch(() => {});
     } catch (e) {
       Logger.error('GuildMemberAdd:', e);

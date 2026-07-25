@@ -8,7 +8,7 @@ export default {
     if (!member.guild) return;
     Logger.info(`Member left: ${member.user?.tag} from ${member.guild.name}`);
     try {
-      const { updateAllStats } = await import('../commands/moderation/stats.js');
+      const { updateAllStats } = await import('../commands/admin/stats.js');
       await updateAllStats(member.guild);
     } catch {}
   },
