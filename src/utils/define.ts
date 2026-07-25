@@ -8,71 +8,11 @@ import {
   SlashCommandChannelOption,
   SlashCommandRoleOption,
   ChatInputCommandInteraction,
-  PermissionFlagsBits,
   ChannelType,
 } from 'discord.js';
 import { isOwner } from './owner.js';
 
-/* ===================================================================
-   define.ts — defineCommand + helpers
-   =================================================================== */
-
-// ─── Quick factories ───
-
-type SlashHandler = (interaction: ChatInputCommandInteraction) => Promise<void>;
-type PrefixHandler = (message: any, args: string[]) => Promise<void>;
-
-export function simple(name: string, desc: string, handler: SlashHandler) {
-  return { data: new SlashCommandBuilder().setName(name).setDescription(desc), execute: handler };
-}
-export function dual(name: string, desc: string, handler: SlashHandler, legacy?: PrefixHandler) {
-  return {
-    data: new SlashCommandBuilder().setName(name).setDescription(desc),
-    execute: handler,
-    prefixExecute: legacy ?? handler,
-  };
-}
-export function modOnly(name: string, desc: string, perms: bigint, handler: SlashHandler) {
-  return {
-    data: new SlashCommandBuilder()
-      .setName(name)
-      .setDescription(desc)
-      .setDefaultMemberPermissions(perms),
-    execute: handler,
-  };
-}
-
-// ─── Owner-only wrapper ───
-
-export function ownerOnly(name: string, desc: string, handler: SlashHandler) {
-  return {
-    data: new SlashCommandBuilder().setName(name).setDescription(desc),
-    execute: async (interaction: any) => {
-      if (!isOwner(interaction.user.id)) {
-        await interaction.reply({
-          content: '❌ Only the bot owner can use this.',
-          ephemeral: true,
-        });
-        return;
-      }
-      await handler(interaction);
-    },
-  };
-}
-
-// ─── Paginated helper ───
-
-export async function paginated(
-  interaction: ChatInputCommandInteraction,
-  title: string,
-  items: { name: string; value: string; inline?: boolean }[],
-  itemsPerPage = 5,
-) {
-  const { paginate } = await import('./pagination.js');
-  await paginate(interaction, title, items, itemsPerPage);
-}
-
-// ─── defineCommand — Discord JSON-style config ───
+/* ─── Types ─── */
 
 type OptionType = 'string' | 'integer' | 'boolean' | 'user' | 'channel' | 'role';
 
@@ -103,6 +43,8 @@ export interface CommandConfig {
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 type CommandResult = { data: SlashCommandBuilder; execute: (interaction: any) => Promise<void> };
+
+/* ─── Option builder ─── */
 
 function addOption(
   builder: SlashCommandBuilder | SlashCommandSubcommandBuilder,
@@ -160,6 +102,8 @@ function addOption(
       break;
   }
 }
+
+/* ─── defineCommand ─── */
 
 export function defineCommand(config: CommandConfig): CommandResult {
   const builder = new SlashCommandBuilder().setName(config.name).setDescription(config.description);
