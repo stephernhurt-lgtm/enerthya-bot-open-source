@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 import { Logger } from './Logger';
 
 export interface BotCommand {
@@ -18,7 +18,9 @@ export class BotClient extends Client {
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildModeration,
+        GatewayIntentBits.GuildMessageReactions,
       ],
+      partials: [Partials.Message, Partials.Channel, Partials.Reaction],
     });
   }
 

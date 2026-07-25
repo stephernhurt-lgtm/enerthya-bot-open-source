@@ -16,7 +16,7 @@ A **modular, open-source** Discord bot built with **discord.js v14** and **TypeS
 - ⚡ **Slash commands** — fully typed, guild or global deployment
 - 🧩 **Modular structure** — drop in new commands and events without touching core files
 - 📦 **TypeScript + tsc** — path aliases resolved automatically via `tsc-alias`
-- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`
+- 🛡 **Moderation suite** — `/ban`, `/kick`, `/clear`, `/say`, `/config`, `/rolemenu`
 - 📊 **Info commands** — `/ping`, `/botinfo`, `/help`
 - 🧹 **Clean logging** — console + file, auto-rotation, coloured `Logger`
 - 🔌 **Ready for Coolify / Cloudflare Tunnel** — just add your `.env`
@@ -52,21 +52,26 @@ src/
 │       ├── kick.ts       # 👢 /kick
 │       ├── ban.ts        # 🔨 /ban
 │       ├── say.ts        # 💬 /say
-│       └── config.ts     # ⚙️ /config
+│       ├── config.ts     # ⚙️ /config
+│       └── rolemenu.ts   # 🎯 /rolemenu
 ├── db/
 │   ├── index.ts          # MongoDB connection
 │   ├── schema.ts         # Model registration
 │   └── schemas/
-│       └── guild.ts      # Guild settings model
+│       ├── guild.ts      # Guild settings model
+│       └── rolemenu.ts   # Reaction roles model
 ├── utils/
 │   ├── validator.ts      # Credential validator
-│   └── cooldown.ts       # Command cooldowns
+│   ├── cooldown.ts       # Command cooldowns
+│   └── audit.ts          # Moderation audit logs
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
     ├── interactionCreate.ts  # Slash command handler
     ├── errorHandler.ts   # Global error handling
-    └── guildMemberAdd.ts # 👋 Welcome messages
+    ├── guildMemberAdd.ts # 👋 Welcome messages
+    ├── messageReactionAdd.ts    # ➕ Reaction role add
+    └── messageReactionRemove.ts # ➖ Reaction role remove
 ```
 
 ---
