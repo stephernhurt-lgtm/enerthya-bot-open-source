@@ -1,36 +1,34 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits } from 'discord.js';
-import { Logger } from '@core/Logger';
+import { PermissionFlagsBits } from 'discord.js';
+import { defineCommand } from '../../utils/define.js';
+import { Logger } from '../../core/Logger.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('slowmode')
-  .setDescription('Set slowmode in a channel.')
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-  .addIntegerOption((opt) =>
-    opt
-      .setName('seconds')
-      .setDescription('Slowmode in seconds (0 to disable)')
-      .setRequired(true)
-      .setMinValue(0)
-      .setMaxValue(21600),
-  )
-  .addChannelOption((opt) =>
-    opt.setName('channel').setDescription('Target channel (defaults to current)'),
-  );
+export default defineCommand({
+  name: 'slowmode',
+  description: 'Set slowmode in a channel.',
+  defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+  options: [
+    { type: 'channel', name: 'channel', description: 'Target channel', required: false },
+    {
+      type: 'integer',
+      name: 'seconds',
+      description: 'Slowmode in seconds (0 to disable)',
+      required: true,
+      min: 0,
+      max: 21600,
+    },
+  ],
+  execute: async (interaction) => {
+    const channel = interaction.options.getChannel('channel') ?? interaction.channel;
+    const seconds = interaction.options.getInteger('seconds', true);
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  const seconds = interaction.options.getInteger('seconds', true);
-  const channel = (interaction.options.getChannel('channel') ?? interaction.channel) as any;
+    if (!channel || !('isTextBased' in channel) || !(channel as any).isTextBased?.()) {
+      await interaction.reply({ content: '❌ Not a text channel.', ephemeral: true });
+      return;
+    }
 
-  if (!channel?.isTextBased?.()) {
-    await interaction.reply({ content: '❌ Not a text channel.', ephemeral: true });
-    return;
-  }
-
-  await channel.setRateLimitPerUser(seconds);
-  Logger.info(`Slowmode set to ${seconds}s in #${channel.name}`);
-
-  const label = seconds === 0 ? 'disabled' : `${seconds} second(s)`;
-  await interaction.reply({
-    content: `✅ Slowmode set to **${label}** in ${channel}.`,
-  });
-}
+    await (channel as any).setRateLimitPerUser(seconds);
+    const label = seconds === 0 ? 'disabled' : `${seconds}s`;
+    Logger.info(`Slowmode ${label} in #${(channel as any).name}`);
+    await interaction.reply({ content: `✅ Slowmode set to **${label}**.` });
+  },
+});

@@ -1,87 +1,67 @@
-import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
-  PermissionFlagsBits,
-  ChannelType,
-} from 'discord.js';
-import { Guild } from '@db/schemas/guild';
-import { Logger } from '@core/Logger';
+import { PermissionFlagsBits, ChannelType } from 'discord.js';
+import { defineCommand } from '../../utils/define.js';
+import { Guild } from '../../db/schemas/guild.js';
+import { Logger } from '../../core/Logger.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('stats')
-  .setDescription('Set up server stats voice channels.')
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
-  .addChannelOption((opt) =>
-    opt
-      .setName('channel')
-      .setDescription('Voice channel to rename with stats')
-      .setRequired(true)
-      .addChannelTypes(ChannelType.GuildVoice),
-  )
-  .addStringOption((opt) =>
-    opt
-      .setName('type')
-      .setDescription('What stat to show')
-      .setRequired(true)
-      .addChoices(
+export default defineCommand({
+  name: 'stats',
+  description: 'Set up server stats voice channels.',
+  defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  options: [
+    {
+      type: 'channel',
+      name: 'channel',
+      description: 'Voice channel to rename',
+      required: true,
+      channelTypes: [ChannelType.GuildVoice],
+    },
+    {
+      type: 'string',
+      name: 'type',
+      description: 'What stat to show',
+      required: true,
+      choices: [
         { name: 'Total Members', value: 'total' },
-        { name: 'Online Members', value: 'online' },
+        { name: 'Online', value: 'online' },
         { name: 'Bots', value: 'bots' },
         { name: 'Humans', value: 'humans' },
-      ),
-  );
+      ],
+    },
+  ],
+  execute: async (interaction) => {
+    if (!interaction.guild) {
+      await interaction.reply({ content: '❌ Server only.', ephemeral: true });
+      return;
+    }
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  if (!interaction.guild) {
-    await interaction.reply({ content: '❌ Server only.', ephemeral: true });
-    return;
-  }
+    const channel = interaction.options.getChannel('channel', true);
+    const type = interaction.options.getString('type', true);
+    const updateKey = `statsChannel_${type}` as const;
 
-  const channel = interaction.options.getChannel('channel', true);
-  const type = interaction.options.getString('type', true);
+    await Guild.findOneAndUpdate(
+      { guildId: interaction.guild.id },
+      { [updateKey]: channel.id },
+      { upsert: true },
+    );
 
-  await interaction.deferReply({ ephemeral: true });
+    const members = interaction.guild.members.cache;
+    const labels: Record<string, string> = {
+      total: `👥 Total: ${interaction.guild.memberCount}`,
+      online: `🟢 Online: ${members.filter((m: any) => m.presence?.status === 'online').size}`,
+      bots: `🤖 Bots: ${members.filter((m: any) => m.user.bot).size}`,
+      humans: `👤 Humans: ${members.filter((m: any) => !m.user.bot).size}`,
+    };
 
-  const updateKey = `statsChannel_${type}` as const;
-  await Guild.findOneAndUpdate(
-    { guildId: interaction.guild.id },
-    { [updateKey]: channel.id },
-    { upsert: true },
-  );
+    await (channel as any).setName(labels[type]).catch(() => {});
+    Logger.info(`Stats channel: ${type} → #${(channel as any).name}`);
+    await interaction.reply({
+      content: `✅ **${type}** stats set in ${channel}.`,
+      ephemeral: true,
+    });
+  },
+});
 
-  await updateStatChannel(interaction.guild, channel.id, type);
-
-  Logger.info(`Stats channel set: ${type} → #${channel.name}`);
-
-  await interaction.editReply({
-    content: `✅ **${type}** stats will be shown in ${channel}.`,
-  });
-}
-
-async function updateStatChannel(guild: any, channelId: string, type: string): Promise<void> {
-  const channel = guild.channels.cache.get(channelId);
-  if (!channel) return;
-
-  const members = guild.members.cache;
-  let label = '';
-
-  switch (type) {
-    case 'total':
-      label = `👥 Total: ${guild.memberCount}`;
-      break;
-    case 'online':
-      label = `🟢 Online: ${members.filter((m: any) => m.presence?.status === 'online').size}`;
-      break;
-    case 'bots':
-      label = `🤖 Bots: ${members.filter((m: any) => m.user.bot).size}`;
-      break;
-    case 'humans':
-      label = `👤 Humans: ${members.filter((m: any) => !m.user.bot).size}`;
-      break;
-  }
-
-  await channel.setName(label).catch(() => {});
-}
+// ─── Update all stats channels (called by guildMemberAdd/Remove) ───
 
 export async function updateAllStats(guild: any): Promise<void> {
   const settings = await Guild.findOne({ guildId: guild.id });
@@ -91,8 +71,19 @@ export async function updateAllStats(guild: any): Promise<void> {
   for (const type of types) {
     const key = `statsChannel_${type}` as keyof typeof settings;
     const channelId = (settings as any)[key];
-    if (channelId) {
-      await updateStatChannel(guild, channelId, type);
-    }
+    if (!channelId) continue;
+
+    const channel = guild.channels.cache.get(channelId);
+    if (!channel) continue;
+
+    const members = guild.members.cache;
+    const labels: Record<string, string> = {
+      total: `👥 Total: ${guild.memberCount}`,
+      online: `🟢 Online: ${members.filter((m: any) => m.presence?.status === 'online').size}`,
+      bots: `🤖 Bots: ${members.filter((m: any) => m.user.bot).size}`,
+      humans: `👤 Humans: ${members.filter((m: any) => !m.user.bot).size}`,
+    };
+
+    await channel.setName(labels[type]).catch(() => {});
   }
 }

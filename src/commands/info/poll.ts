@@ -1,63 +1,49 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
-import { Logger } from '@core/Logger';
+import { EmbedBuilder } from 'discord.js';
+import { defineCommand, cmd, str } from '../../utils/define.js';
 
-const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+// Mixing approaches — use defineCommand for the poll, or cmd/str for simpler cases
+export default defineCommand({
+  name: 'poll',
+  description: 'Create a poll with reactions.',
+  options: [
+    { type: 'string', name: 'question', description: 'Poll question', required: true, max: 256 },
+    {
+      type: 'string',
+      name: 'options',
+      description: 'Options separated by | (e.g. Yes | No | Maybe)',
+      required: true,
+      max: 500,
+    },
+  ],
+  execute: async (interaction) => {
+    const question = interaction.options.getString('question', true);
+    const raw = interaction.options.getString('options', true);
+    const options = raw
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-export const data = new SlashCommandBuilder()
-  .setName('poll')
-  .setDescription('Create a poll with reactions.')
-  .addStringOption((opt) =>
-    opt.setName('question').setDescription('Poll question').setRequired(true).setMaxLength(256),
-  )
-  .addStringOption((opt) =>
-    opt
-      .setName('options')
-      .setDescription('Options separated by | (e.g. Yes | No | Maybe)')
-      .setRequired(true)
-      .setMaxLength(500),
-  );
+    if (options.length < 2 || options.length > 10) {
+      await interaction.reply({
+        content: '❌ Need 2–10 options separated by `|`.',
+        ephemeral: true,
+      });
+      return;
+    }
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  const question = interaction.options.getString('question', true);
-  const optionsRaw = interaction.options.getString('options', true);
+    const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    const desc = options.map((opt, i) => `${emojis[i]}  ${opt}`).join('\n\n');
 
-  const options = optionsRaw
-    .split('|')
-    .map((s) => s.trim())
-    .filter(Boolean);
+    const embed = new EmbedBuilder()
+      .setColor(0x2b2d31)
+      .setTitle('📊 ' + question)
+      .setDescription(desc)
+      .setFooter({ text: `Poll by ${interaction.user.tag}` })
+      .setTimestamp();
 
-  if (options.length < 2) {
-    await interaction.reply({
-      content: '❌ Provide at least 2 options separated by `|`.',
-      ephemeral: true,
-    });
-    return;
-  }
+    await interaction.reply({ embeds: [embed] });
+    const message = await interaction.fetchReply();
 
-  if (options.length > 10) {
-    await interaction.reply({
-      content: '❌ Maximum 10 options allowed.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  const description = options.map((opt, i) => `${emojis[i]}  ${opt}`).join('\n\n');
-
-  const embed = new EmbedBuilder()
-    .setColor(0x2b2d31)
-    .setTitle('📊 ' + question)
-    .setDescription(description)
-    .setFooter({ text: `Poll by ${interaction.user.tag}` })
-    .setTimestamp();
-
-  await interaction.reply({ embeds: [embed] });
-
-  const message = await interaction.fetchReply();
-
-  for (let i = 0; i < options.length; i++) {
-    await message.react(emojis[i]);
-  }
-
-  Logger.info(`Poll created: "${question}" (${options.length} options)`);
-}
+    for (let i = 0; i < options.length; i++) await message.react(emojis[i]);
+  },
+});

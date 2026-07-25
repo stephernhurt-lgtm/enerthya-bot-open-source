@@ -1,135 +1,121 @@
-import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
-  PermissionFlagsBits,
-  EmbedBuilder,
-} from 'discord.js';
-import { Giveaway, IGiveaway } from '@db/schemas/giveaway';
-import { Logger } from '@core/Logger';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { defineCommand } from '../../utils/define.js';
+import { Giveaway } from '../../db/schemas/giveaway.js';
+import { Logger } from '../../core/Logger.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('giveaway')
-  .setDescription('Manage giveaways.')
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
-  .addSubcommand((sub) =>
-    sub
-      .setName('start')
-      .setDescription('Start a giveaway.')
-      .addStringOption((opt) =>
-        opt.setName('prize').setDescription('Prize name').setRequired(true).setMaxLength(200),
-      )
-      .addIntegerOption((opt) =>
-        opt
-          .setName('duration')
-          .setDescription('Duration in minutes')
-          .setRequired(true)
-          .setMinValue(1)
-          .setMaxValue(10080),
-      )
-      .addIntegerOption((opt) =>
-        opt
-          .setName('winners')
-          .setDescription('Number of winners (default 1)')
-          .setMinValue(1)
-          .setMaxValue(10),
-      ),
-  )
-  .addSubcommand((sub) =>
-    sub
-      .setName('end')
-      .setDescription('End a giveaway early.')
-      .addStringOption((opt) =>
-        opt.setName('message_id').setDescription('Message ID of the giveaway').setRequired(true),
-      ),
-  );
-
-export async function execute(interaction: ChatInputCommandInteraction) {
-  if (!interaction.guild) {
-    await interaction.reply({ content: '❌ Server only.', ephemeral: true });
-    return;
-  }
-
-  const sub = interaction.options.getSubcommand();
-
-  if (sub === 'start') {
-    const prize = interaction.options.getString('prize', true);
-    const durationMin = interaction.options.getInteger('duration', true);
-    const winnerCount = interaction.options.getInteger('winners') ?? 1;
-    const endsAt = new Date(Date.now() + durationMin * 60 * 1000);
-
-    const embed = new EmbedBuilder()
-      .setColor(0x2b2d31)
-      .setTitle('🎁 Giveaway')
-      .setDescription(`**${prize}**`)
-      .addFields(
-        { name: 'Ends', value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
-        { name: 'Winners', value: `${winnerCount}`, inline: true },
-        { name: 'Hosted by', value: interaction.user.toString(), inline: true },
-      )
-      .setFooter({ text: 'React with 🎉 to enter' })
-      .setTimestamp();
-
-    if (!interaction.channel || !('send' in interaction.channel)) {
-      await interaction.reply({ content: '❌ Cannot send messages here.', ephemeral: true });
+export default defineCommand({
+  name: 'giveaway',
+  description: 'Manage giveaways.',
+  defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  subcommands: [
+    {
+      name: 'start',
+      description: 'Start a giveaway.',
+      options: [
+        { type: 'string', name: 'prize', description: 'Prize name', required: true, max: 200 },
+        {
+          type: 'integer',
+          name: 'duration',
+          description: 'Duration in minutes',
+          required: true,
+          min: 1,
+          max: 10080,
+        },
+        {
+          type: 'integer',
+          name: 'winners',
+          description: 'Number of winners (default 1)',
+          min: 1,
+          max: 10,
+        },
+      ],
+    },
+    {
+      name: 'end',
+      description: 'End a giveaway early.',
+      options: [
+        {
+          type: 'string',
+          name: 'message_id',
+          description: 'Message ID of the giveaway',
+          required: true,
+        },
+      ],
+    },
+  ],
+  execute: async (interaction) => {
+    if (!interaction.guild) {
+      await interaction.reply({ content: '❌ Server only.', ephemeral: true });
       return;
     }
 
-    const message = await (interaction.channel as any).send({ embeds: [embed] });
-    await message.react('🎉');
+    const sub = interaction.options.getSubcommand();
 
-    await Giveaway.create({
-      guildId: interaction.guild.id,
-      channelId: interaction.channel!.id,
-      messageId: message.id,
-      prize,
-      winnerCount,
-      endsAt,
-      hosterId: interaction.user.id,
-    });
+    if (sub === 'start') {
+      const prize = interaction.options.getString('prize', true);
+      const durationMin = interaction.options.getInteger('duration', true);
+      const winnerCount = interaction.options.getInteger('winners') ?? 1;
+      const endsAt = new Date(Date.now() + durationMin * 60_000);
 
-    Logger.info(`Giveaway started: "${prize}" (${durationMin}min)`);
+      const embed = new EmbedBuilder()
+        .setColor(0x2b2d31)
+        .setTitle('🎁 Giveaway')
+        .setDescription(`**${prize}**`)
+        .addFields(
+          { name: 'Ends', value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
+          { name: 'Winners', value: `${winnerCount}`, inline: true },
+          { name: 'Hosted by', value: interaction.user.toString(), inline: true },
+        )
+        .setFooter({ text: 'React with 🎉 to enter' })
+        .setTimestamp();
 
-    await interaction.reply({
-      content: `✅ Giveaway started! [Jump](${message.url})`,
-      ephemeral: true,
-    });
-    return;
-  }
+      const message = await (interaction.channel as any).send({ embeds: [embed] });
+      await message.react('🎉');
 
-  if (sub === 'end') {
-    const messageId = interaction.options.getString('message_id', true);
-
-    const giveaway = await Giveaway.findOne({
-      guildId: interaction.guild.id,
-      messageId,
-      ended: false,
-    });
-
-    if (!giveaway) {
+      await Giveaway.create({
+        guildId: interaction.guild.id,
+        channelId: interaction.channel!.id,
+        messageId: message.id,
+        prize,
+        winnerCount,
+        endsAt,
+        hosterId: interaction.user.id,
+      });
+      Logger.info(`Giveaway: "${prize}" (${durationMin}min)`);
       await interaction.reply({
-        content: '❌ Giveaway not found or already ended.',
+        content: `✅ Giveaway started! [Jump](${message.url})`,
         ephemeral: true,
       });
       return;
     }
 
-    giveaway.endsAt = new Date();
-    await giveaway.save();
+    if (sub === 'end') {
+      const messageId = interaction.options.getString('message_id', true);
+      const giveaway = await Giveaway.findOne({
+        guildId: interaction.guild.id,
+        messageId,
+        ended: false,
+      });
 
-    await endGiveaway(giveaway, interaction.client);
+      if (!giveaway) {
+        await interaction.reply({ content: '❌ Not found or already ended.', ephemeral: true });
+        return;
+      }
 
-    await interaction.reply({
-      content: '✅ Giveaway ended early!',
-      ephemeral: true,
-    });
-  }
-}
+      giveaway.endsAt = new Date();
+      await giveaway.save();
+      await endGiveaway(giveaway, interaction.client);
+      await interaction.reply({ content: '✅ Giveaway ended early!', ephemeral: true });
+    }
+  },
+});
 
-export async function endGiveaway(giveaway: IGiveaway, client: any): Promise<void> {
+// ─── endGiveaway — called by ready.ts checker and /giveaway end ───
+
+export async function endGiveaway(giveaway: any, client: any): Promise<void> {
   try {
     const channel = await client.channels.fetch(giveaway.channelId).catch(() => null);
     if (!channel) return;
-
     const message = await channel.messages.fetch(giveaway.messageId).catch(() => null);
     if (!message) return;
 
@@ -146,7 +132,6 @@ export async function endGiveaway(giveaway: IGiveaway, client: any): Promise<voi
       const embed = EmbedBuilder.from(message.embeds[0])
         .setColor(0xed4245)
         .setFooter({ text: 'Ended — No winners' });
-
       await message.edit({ embeds: [embed] });
       await message.reply('🎁 Giveaway ended — no one entered.');
       return;
@@ -157,14 +142,12 @@ export async function endGiveaway(giveaway: IGiveaway, client: any): Promise<voi
     const embed = EmbedBuilder.from(message.embeds[0])
       .setColor(0x57f287)
       .setFooter({ text: 'Ended' });
-
     await message.edit({ embeds: [embed] });
     await message.reply(
       `🎁 **${giveaway.prize}**\nWinner(s): ${winners.map((w: any) => w.toString()).join(', ')}`,
     );
 
     await Giveaway.findByIdAndUpdate(giveaway._id, { ended: true });
-
     Logger.info(`Giveaway ended: "${giveaway.prize}" — ${winners.length} winner(s)`);
   } catch (error) {
     Logger.error('Giveaway end error:', error);

@@ -1,61 +1,47 @@
 import { Events, EmbedBuilder } from 'discord.js';
-import { Guild } from '@db/schemas/guild';
-import { Logger } from '@core/Logger';
-import type { BotClient } from '@core/Client';
-import { updateAllStats } from '@commands/moderation/stats';
+import { Guild } from '../db/schemas/guild.js';
+import { Logger } from '../core/Logger.js';
 
 export default {
   name: Events.GuildMemberAdd,
   once: false,
   async execute(member: any) {
     if (!member.guild) return;
-
     try {
       const settings = await Guild.findOne({ guildId: member.guild.id });
-
-      const channelId = settings?.welcomeChannelId;
-      if (!channelId) return;
-
-      const channel = member.guild.channels.cache.get(channelId);
-      if (!channel?.isTextBased()) return;
-
-      let message = settings?.welcomeMessage ?? 'Welcome {user} to {guild}!';
-      message = message
-        .replace(/{user}/g, `<@${member.id}>`)
-        .replace(/{guild}/g, member.guild.name)
-        .replace(/{count}/g, member.guild.memberCount);
-
-      const embed = new EmbedBuilder()
-        .setColor(0x2b2d31)
-        .setTitle('👋 Welcome!')
-        .setDescription(message)
-        .setThumbnail(member.user.displayAvatarURL())
-        .setTimestamp();
-
-      await channel.send({ embeds: [embed] });
-      Logger.info(`Welcome message sent to ${member.user.tag} in ${member.guild.name}`);
-    } catch (error) {
-      Logger.error(`Welcome error for ${member.user?.tag}:`, error);
-    }
-
-    // Auto-role
-    try {
-      const settings = await Guild.findOne({ guildId: member.guild.id });
-      if (settings?.autoRoleId) {
-        const role = member.guild.roles.cache.get(settings.autoRoleId);
-        if (role) {
-          await member.roles.add(role);
-          Logger.info(`Autorole assigned ${role.name} to ${member.user.tag}`);
+      if (settings?.welcomeChannelId) {
+        const channel = member.guild.channels.cache.get(settings.welcomeChannelId);
+        if (channel?.isTextBased()) {
+          let msg = (settings.welcomeMessage ?? 'Welcome {user} to {guild}!')
+            .replace(/{user}/g, `<@${member.id}>`)
+            .replace(/{guild}/g, member.guild.name)
+            .replace(/{count}/g, member.guild.memberCount);
+          const embed = new EmbedBuilder()
+            .setColor(0x2b2d31)
+            .setTitle('👋 Welcome!')
+            .setDescription(msg)
+            .setThumbnail(member.user.displayAvatarURL())
+            .setTimestamp();
+          await channel.send({ embeds: [embed] });
+          Logger.info(`Welcome: ${member.user.tag}`);
         }
       }
-    } catch {
-      /* auto-role is best-effort */
+    } catch (e) {
+      Logger.error('Welcome:', e);
     }
-
     try {
+      const s = await Guild.findOne({ guildId: member.guild.id });
+      if (s?.autoRoleId) {
+        const r = member.guild.roles.cache.get(s.autoRoleId);
+        if (r) {
+          await member.roles.add(r);
+          Logger.info(`Autorole: ${r.name} to ${member.user.tag}`);
+        }
+      }
+    } catch {}
+    try {
+      const { updateAllStats } = await import('../commands/moderation/stats.js');
       await updateAllStats(member.guild);
-    } catch {
-      /* stats update is best-effort */
-    }
+    } catch {}
   },
 };
