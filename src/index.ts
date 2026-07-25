@@ -2,24 +2,17 @@
 // Enerthya Bot — Copyright (c) 2026 stephernhurt-lgtm
 // See LICENSE for full license text.
 
-import { BotClient } from '@core/Client';
-import { config } from '@config/index';
-import { Logger } from '@core/Logger';
+import { BotClient } from '@core/Client.js';
+import { config } from '@config/index.js';
+import { Logger } from '@core/Logger.js';
 import { loadEvents } from '@core/loadEvents.js';
 import { loadCommands } from '@core/loadCommands.js';
-import { deployCommands } from './deploy-commands';
-import { connectDb } from '@db/index';
-import { initSchema } from '@db/schema';
-import { validateCredentials } from '@utils/validator';
+import { deployCommands } from './deploy-commands.js';
+import { connectDb } from '@db/index.js';
+import { initSchema } from '@db/schema.js';
 
 async function main() {
   Logger.section('ENERTHYA BOT');
-
-  const { valid } = validateCredentials();
-  if (!valid) {
-    Logger.error('Validation failed — stopping.');
-    process.exit(1);
-  }
 
   await connectDb(config.mongoUri);
   initSchema();

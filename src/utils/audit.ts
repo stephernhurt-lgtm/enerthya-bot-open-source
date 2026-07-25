@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import { Guild } from '@db/schemas/guild';
-import { Logger } from '@core/Logger';
+import { Guild } from '../db/schemas/guild.js';
+import { Logger } from '../core/Logger.js';
 
 type AuditAction = 'ban' | 'kick' | 'clear' | 'config_update' | 'welcome_update';
 
@@ -20,26 +20,6 @@ const actionLabels: Record<AuditAction, string> = {
   welcome_update: '👋 Welcome Update',
 };
 
-export async function sendAuditLog(
-  guildId: string,
-  action: AuditAction,
-  fields: { name: string; value: string }[],
-  authorTag?: string,
-  authorIcon?: string,
-): Promise<void> {
-  try {
-    const settings = await Guild.findOne({ guildId });
-    const channelId = settings?.auditChannelId;
-    if (!channelId) return;
-
-    // We can't access the client here directly, so we log the intent
-    // The actual sending happens from the command context
-    Logger.info(`Audit log queued: ${action} in guild ${guildId}`);
-  } catch (error) {
-    Logger.error('Audit log error:', error);
-  }
-}
-
 export function buildAuditEmbed(
   action: AuditAction,
   fields: { name: string; value: string; inline?: boolean }[],
@@ -50,11 +30,7 @@ export function buildAuditEmbed(
     .setTitle(actionLabels[action])
     .addFields(fields.map((f) => ({ name: f.name, value: f.value, inline: f.inline ?? false })))
     .setTimestamp();
-
-  if (author) {
-    embed.setAuthor({ name: author.tag, iconURL: author.iconURL });
-  }
-
+  if (author) embed.setAuthor({ name: author.tag, iconURL: author.iconURL });
   return embed;
 }
 
@@ -79,10 +55,8 @@ export async function getAuditChannel(
   try {
     const settings = await Guild.findOne({ guildId });
     if (!settings?.auditChannelId) return null;
-
     const channel = clientChannels.cache.get(settings.auditChannelId);
     if (!channel?.isTextBased()) return null;
-
     return channel as GuildTextBasedChannel;
   } catch {
     return null;

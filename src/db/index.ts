@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Logger } from '@core/Logger';
+import { Logger } from '@core/Logger.js';
 
 export async function connectDb(uri: string): Promise<void> {
   try {

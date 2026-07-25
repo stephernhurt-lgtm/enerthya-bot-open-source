@@ -1,4 +1,4 @@
-import { Logger } from '@core/Logger';
+import { Logger } from '@core/Logger.js';
 import { Guild } from './schemas/guild';
 
 export function initSchema(): void {

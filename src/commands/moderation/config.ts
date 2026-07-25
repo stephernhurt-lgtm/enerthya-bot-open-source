@@ -4,15 +4,19 @@ import { Logger } from '../../core/Logger.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { getAuditChannel, sendAudit } from '../../utils/audit.js';
 
+const defaults = {
+  prefix: '/',
+  language: 'en',
+  welcomeMessage: null as string | null,
+  auditChannelId: null as string | null,
+};
+
 export default defineCommand({
   name: 'config',
   description: 'View or update guild settings.',
   defaultMemberPermissions: Perm.ManageGuild,
   subcommands: [
-    {
-      name: 'view',
-      description: 'Show current guild settings.',
-    },
+    { name: 'view', description: 'Show current guild settings.' },
     {
       name: 'set',
       description: 'Update a guild setting.',
@@ -55,20 +59,16 @@ export default defineCommand({
     };
 
     if (sub === 'view') {
-      let settings = await Guild.findOne({ guildId });
-      if (!settings) settings = await Guild.create({ guildId });
-
+      const settings = await Guild.findOne({ guildId });
+      const s = settings ?? defaults;
       const embed = new EmbedBuilder()
         .setColor(0x2b2d31)
         .setTitle('⚙️ Guild Settings')
         .addFields(
-          { name: 'Prefix', value: `\`${settings.prefix}\``, inline: true },
-          { name: 'Language', value: settings.language, inline: true },
-          { name: 'Welcome', value: settings.welcomeMessage ?? 'Not set' },
-          {
-            name: 'Audit Channel',
-            value: settings.auditChannelId ? `<#${settings.auditChannelId}>` : 'Not set',
-          },
+          { name: 'Prefix', value: `\`${s.prefix}\``, inline: true },
+          { name: 'Language', value: s.language, inline: true },
+          { name: 'Welcome', value: s.welcomeMessage ?? 'Not set' },
+          { name: 'Audit Channel', value: s.auditChannelId ? `<#${s.auditChannelId}>` : 'Not set' },
         )
         .setTimestamp();
       await interaction.reply({ embeds: [embed] });

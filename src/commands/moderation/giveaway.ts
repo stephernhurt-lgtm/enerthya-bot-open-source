@@ -138,7 +138,12 @@ export async function endGiveaway(giveaway: any, client: any): Promise<void> {
       return;
     }
 
-    const winners = entries.sort(() => Math.random() - 0.5).slice(0, giveaway.winnerCount);
+    // Fisher-Yates shuffle (unbiased)
+    for (let i = entries.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+    const winners = entries.slice(0, giveaway.winnerCount);
 
     const embed = EmbedBuilder.from(message.embeds[0])
       .setColor(0x57f287)

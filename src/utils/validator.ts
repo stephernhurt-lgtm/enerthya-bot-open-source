@@ -1,5 +1,5 @@
-import { Logger } from '@core/Logger';
-import { config } from '@config/index';
+import { Logger } from '@core/Logger.js';
+import { config } from '@config/index.js';
 
 export interface ValidationResult {
   valid: boolean;

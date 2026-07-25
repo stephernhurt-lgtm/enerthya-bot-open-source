@@ -9,6 +9,8 @@ export default {
     if (!member.guild) return;
     try {
       const settings = await Guild.findOne({ guildId: member.guild.id });
+
+      // Welcome message
       if (settings?.welcomeChannelId) {
         const channel = member.guild.channels.cache.get(settings.welcomeChannelId);
         if (channel?.isTextBased()) {
@@ -16,32 +18,33 @@ export default {
             .replace(/{user}/g, `<@${member.id}>`)
             .replace(/{guild}/g, member.guild.name)
             .replace(/{count}/g, member.guild.memberCount);
-          const embed = new EmbedBuilder()
-            .setColor(0x2b2d31)
-            .setTitle('👋 Welcome!')
-            .setDescription(msg)
-            .setThumbnail(member.user.displayAvatarURL())
-            .setTimestamp();
-          await channel.send({ embeds: [embed] });
-          Logger.info(`Welcome: ${member.user.tag}`);
+          await channel.send({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x2b2d31)
+                .setTitle('👋 Welcome!')
+                .setDescription(msg)
+                .setThumbnail(member.user.displayAvatarURL())
+                .setTimestamp(),
+            ],
+          });
         }
       }
-    } catch (e) {
-      Logger.error('Welcome:', e);
-    }
-    try {
-      const s = await Guild.findOne({ guildId: member.guild.id });
-      if (s?.autoRoleId) {
-        const r = member.guild.roles.cache.get(s.autoRoleId);
-        if (r) {
-          await member.roles.add(r);
-          Logger.info(`Autorole: ${r.name} to ${member.user.tag}`);
+
+      // Auto-role
+      if (settings?.autoRoleId) {
+        const role = member.guild.roles.cache.get(settings.autoRoleId);
+        if (role) {
+          await member.roles.add(role);
+          Logger.info(`Autorole: ${role.name} to ${member.user.tag}`);
         }
       }
-    } catch {}
-    try {
+
+      // Stats update
       const { updateAllStats } = await import('../commands/moderation/stats.js');
-      await updateAllStats(member.guild);
-    } catch {}
+      await updateAllStats(member.guild).catch(() => {});
+    } catch (e) {
+      Logger.error('GuildMemberAdd:', e);
+    }
   },
 };
