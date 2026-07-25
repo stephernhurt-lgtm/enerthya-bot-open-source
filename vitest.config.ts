@@ -14,6 +14,8 @@ export default defineConfig({
       '@events': resolve(__dirname, 'src/events'),
       '@db': resolve(__dirname, 'src/db'),
       '@utils': resolve(__dirname, 'src/utils'),
+      '@services': resolve(__dirname, 'src/services'),
+      '@types': resolve(__dirname, 'src/types'),
     },
   },
 });

@@ -20,6 +20,8 @@
       "@events/*": ["./src/events/*"],
       "@db/*": ["./src/db/*"],
       "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"],
+      "@types/*": ["./src/types/*"],
       "*": ["./*"]
     }
   },
