@@ -1,14 +1,10 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+import { cmd } from '../../utils/builder';
 
-export const data = new SlashCommandBuilder()
-  .setName('ping')
-  .setDescription('Check the bot latency.');
+export const data = cmd('ping', 'Check the bot latency.');
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  const sent = await interaction.reply({
-    content: 'Pong! 🏓',
-    fetchReply: true,
-  });
+export async function execute(interaction: any) {
+  const sent = await interaction.reply({ content: 'Pong! 🏓', fetchReply: true });
 
   const roundtrip = sent.createdTimestamp - interaction.createdTimestamp;
 
@@ -17,11 +13,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     .setTitle('🏓 Pong!')
     .addFields(
       { name: 'Roundtrip', value: `${roundtrip}ms`, inline: true },
-      {
-        name: 'WebSocket',
-        value: `${interaction.client.ws.ping}ms`,
-        inline: true,
-      },
+      { name: 'WebSocket', value: `${interaction.client.ws.ping}ms`, inline: true },
     )
     .setTimestamp();
 

@@ -69,7 +69,8 @@ src/
 │   ├── validator.ts      # Credential validator
 │   ├── cooldown.ts       # Command cooldowns
 │   ├── audit.ts          # Moderation audit logs
-│   └── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
+│   ├── helpers.ts        # Shared helpers (createEmbed, replyError, replySuccess)
+│   └── builder.ts        # ✨ Command builders (cmd, str, usr, simple, modCmd)
 └── events/
     ├── index.ts          # Event loader
     ├── ready.ts          # Client ready handler
@@ -140,33 +141,46 @@ yarn start
 2. Export `data` (a `SlashCommandBuilder` instance) and `execute`
 3. Run `yarn build` — the loader picks it up automatically
 
-All commands are automatically typed. You can also use the `TypedCommand` helper for cleaner code:
+### 🚀 Quick start — using builder helpers
+
+Use the shortcuts from `@utils/builder` to write commands in seconds:
 
 ```ts
-import { command } from '../types';
-import { SlashCommandBuilder } from 'discord.js';
+import { simple, cmd, str, usr, modCmd } from '../utils/builder';
 
-export default command(
-  new SlashCommandBuilder().setName('hello').setDescription('Say hello!'),
-  async (interaction) => {
-    await interaction.reply('Hello, world! 👋');
-  },
-);
+// Simplest possible command
+export default simple('hello', 'Say hello!', async (interaction) => {
+  await interaction.reply('Hello! 👋');
+});
+
+// Command with options
+export const data = cmd('echo', 'Repeat a message').addStringOption(str('message', 'Text to repeat'));
+export async function execute(interaction) {
+  await interaction.reply(interaction.options.getString('message', true));
+}
+
+// Mod-only command
+export const data = modCmd('warn', 'Warn a user').addUserOption(usr('target', 'Who to warn'));
+export async function execute(interaction) { /* ... */ }
 ```
+
+### 🧱 Available builders
+
+| Helper | Shortcut for |
+|--------|-------------|
+| `cmd(name, desc)` | `new SlashCommandBuilder().setName().setDescription()` |
+| `sub(name, desc)` | `new SlashCommandSubcommandBuilder()` |
+| `modCmd(name, desc, perms?)` | `cmd()` + `setDefaultMemberPermissions(ManageMessages)` |
+| `adminCmd(name, desc)` | `cmd()` + `setDefaultMemberPermissions(Administrator)` |
+| `str(name, desc, required?)` | String option |
+| `int(name, desc, required?)` | Integer option |
+| `bool(name, desc, required?)` | Boolean option |
+| `usr(name, desc, required?)` | User option |
+| `role(name, desc, required?)` | Role option |
+| `ch(name, desc, required?)` | Channel option |
+| `simple(name, desc, handler)` | Returns `{ data, execute }` ready to export |
 
 > 💡 **Tip:** Use `replyError` and `replySuccess` from `@utils/helpers` for quick ephemeral responses.
-
-```ts
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-
-export const data = new SlashCommandBuilder()
-  .setName('hello')
-  .setDescription('Say hello!');
-
-export async function execute(interaction: ChatInputCommandInteraction) {
-  await interaction.reply('Hello, world! 👋');
-}
-```
 
 ---
 
