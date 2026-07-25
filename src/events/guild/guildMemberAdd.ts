@@ -1,6 +1,6 @@
 import { Events, EmbedBuilder } from 'discord.js';
-import { Guild } from '../db/schemas/guild.js';
-import { Logger } from '../core/Logger.js';
+import { Guild } from '../../db/schemas/guild.js';
+import { Logger } from '../../core/Logger.js';
 
 export default {
   name: Events.GuildMemberAdd,
@@ -41,7 +41,7 @@ export default {
       }
 
       // Stats update
-      const { updateAllStats } = await import('../services/statsService.js');
+      const { updateAllStats } = await import('../../services/stats/statsService.js');
       await updateAllStats(member.guild).catch(() => {});
     } catch (e) {
       Logger.error('GuildMemberAdd:', e);

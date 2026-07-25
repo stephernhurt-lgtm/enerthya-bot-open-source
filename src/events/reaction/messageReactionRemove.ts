@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
-import { RoleMenu } from '../db/schemas/rolemenu.js';
-import { Logger } from '../core/Logger.js';
+import { RoleMenu } from '../../db/schemas/rolemenu.js';
+import { Logger } from '../../core/Logger.js';
 
 export default {
   name: Events.MessageReactionRemove,

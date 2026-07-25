@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import { Guild } from '../db/schemas/guild.js';
-import { Logger } from '../core/Logger.js';
+import { Guild } from '../../db/schemas/guild.js';
+import { Logger } from '../../core/Logger.js';
 
 type AuditAction = 'ban' | 'kick' | 'clear' | 'config_update' | 'welcome_update';
 
@@ -11,7 +11,6 @@ const actionColors: Record<AuditAction, number> = {
   config_update: 0x57f287,
   welcome_update: 0x57f287,
 };
-
 const actionLabels: Record<AuditAction, string> = {
   ban: '🔨 Ban',
   kick: '👢 Kick',
@@ -41,8 +40,7 @@ export async function sendAudit(
   author?: { tag: string; iconURL?: string },
 ): Promise<void> {
   try {
-    const embed = buildAuditEmbed(action, fields, author);
-    await channel.send({ embeds: [embed] });
+    await channel.send({ embeds: [buildAuditEmbed(action, fields, author)] });
   } catch (error) {
     Logger.error('Failed to send audit log:', error);
   }

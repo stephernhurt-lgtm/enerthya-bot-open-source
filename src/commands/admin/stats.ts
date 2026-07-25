@@ -2,7 +2,7 @@ import { ChannelType } from 'discord.js';
 import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Guild } from '../../db/schemas/guild.js';
 import { Logger } from '../../core/Logger.js';
-import { updateAllStats } from '../../services/statsService.js';
+import { updateAllStats } from '../../services/stats/statsService.js';
 
 export default defineCommand({
   name: 'stats',

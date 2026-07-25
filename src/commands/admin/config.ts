@@ -2,7 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Logger } from '../../core/Logger.js';
 import { Guild } from '../../db/schemas/guild.js';
-import { getAuditChannel, sendAudit } from '../../services/auditService.js';
+import { getAuditChannel, sendAudit } from '../../services/moderation/auditService.js';
 
 const defaults = {
   prefix: '/',

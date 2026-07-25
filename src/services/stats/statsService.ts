@@ -1,5 +1,5 @@
-import { Guild } from '../db/schemas/guild.js';
-import { Logger } from '../core/Logger.js';
+import { Guild } from '../../db/schemas/guild.js';
+import { Logger } from '../../core/Logger.js';
 
 export async function updateAllStats(guild: any): Promise<void> {
   try {

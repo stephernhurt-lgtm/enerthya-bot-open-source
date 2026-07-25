@@ -1,7 +1,7 @@
 import { Events } from 'discord.js';
-import { Guild } from '../db/schemas/guild.js';
-import { Logger } from '../core/Logger.js';
-import type { BotClient } from '../core/Client.js';
+import { Guild } from '../../db/schemas/guild.js';
+import { Logger } from '../../core/Logger.js';
+import type { BotClient } from '../../core/Client.js';
 
 export default {
   name: Events.MessageCreate,

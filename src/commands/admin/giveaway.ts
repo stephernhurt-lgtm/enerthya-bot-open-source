@@ -3,7 +3,7 @@ import { defineCommand, Perm } from '../../utils/builders/define.js';
 import { Giveaway } from '../../db/schemas/giveaway.js';
 import { Logger } from '../../core/Logger.js';
 import { timestamp } from '../../utils/format/time.js';
-import { endGiveaway } from '../../services/giveawayService.js';
+import { endGiveaway } from '../../services/community/giveawayService.js';
 
 export default defineCommand({
   name: 'giveaway',

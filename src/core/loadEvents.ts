@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs';
+import { readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Logger } from './Logger.js';
@@ -7,11 +7,20 @@ import type { BotClient } from './Client.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const eventsPath = join(__dirname, '..', 'events');
 
+function scanDir(dir: string, files: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) scanDir(full, files);
+    else if (entry.endsWith('.js')) files.push(full);
+  }
+  return files;
+}
+
 export async function loadEvents(client: BotClient): Promise<void> {
-  const eventFiles = readdirSync(eventsPath).filter((f) => f.endsWith('.js'));
+  const eventFiles = scanDir(eventsPath);
 
   for (const file of eventFiles) {
-    const event = await import(join(eventsPath, file));
+    const event = await import(file);
     const { name, once, execute } = event.default ?? event;
 
     if (!name || !execute) {
@@ -19,11 +28,8 @@ export async function loadEvents(client: BotClient): Promise<void> {
       continue;
     }
 
-    if (once) {
-      client.once(name, (...args: unknown[]) => execute(client, ...args));
-    } else {
-      client.on(name, (...args: unknown[]) => execute(...args));
-    }
+    if (once) client.once(name, (...args: unknown[]) => execute(client, ...args));
+    else client.on(name, (...args: unknown[]) => execute(...args));
 
     Logger.debug(`Loaded event: ${name}`);
   }

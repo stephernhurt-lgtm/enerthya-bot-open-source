@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
-import { Giveaway } from '../db/schemas/giveaway.js';
-import { Logger } from '../core/Logger.js';
+import { Giveaway } from '../../db/schemas/giveaway.js';
+import { Logger } from '../../core/Logger.js';
 
 export async function endGiveaway(giveaway: any, client: any): Promise<void> {
   try {

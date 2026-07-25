@@ -1,6 +1,6 @@
 import { Events, ChatInputCommandInteraction } from 'discord.js';
-import { Logger } from '../core/Logger.js';
-import type { BotClient } from '../core/Client.js';
+import { Logger } from '../../core/Logger.js';
+import type { BotClient } from '../../core/Client.js';
 
 export default {
   name: Events.InteractionCreate,

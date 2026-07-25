@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { defineCommand, Perm } from '../../utils/builders/define.js';
-import { getAuditChannel, sendAudit } from '../../services/auditService.js';
+import { getAuditChannel, sendAudit } from '../../services/moderation/auditService.js';
 
 export default defineCommand({
   name: 'ban',
