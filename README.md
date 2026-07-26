@@ -17,7 +17,8 @@ A modular Discord bot built with **discord.js v14** and **TypeScript**. This is 
 - 🧩 **Modular structure** — commands, events, services, utils separados
 - 📦 **TypeScript + ESM** — path aliases resolvidos via `tsc-alias`
 - 🛡 **Moderation** — `/ban`, `/kick`, `/clear`, `/say`, `/slowmode`, `/lock`, `/unlock`
-- ⚙️ **Admin** — `/config`, `/giveaway`, `/autorole`, `/rolemenu`, `/stats`
+- 🎛️ **Config Wizard** — `/config` abre menu interativo com modais
+- ⚙️ **Admin** — `/config`, `/giveaway` (start/list/end), `/autorole`, `/rolemenu`, `/stats`
 - 📊 **Info** — `/ping`, `/help`, `/poll`, `/userinfo`, `/serverinfo`, `/avatar`, `/uptime`, `/invite`
 - 👑 **Owner** — `/servers` (só o dono do bot)
 - 🧹 **Logger** — console + arquivos separados por nível, chalk colors
