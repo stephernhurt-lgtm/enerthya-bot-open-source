@@ -1,6 +1,6 @@
 # 🤖 Enerthya Bot
 
-![CI](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/stephernhurt-lgtm/enerthya-bot-open-source/actions/workflows/ci.yml/badge.svg?branch=main)
 ![License](https://img.shields.io/github/license/stephernhurt-lgtm/enerthya-bot-open-source?color=blue&label=AGPL)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/discord.js-v14-5865F2?logo=discord)
