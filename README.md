@@ -170,94 +170,68 @@ yarn start
 2. Export `data` (a `SlashCommandBuilder` instance) and `execute`
 3. Run `yarn build` — the loader picks it up automatically
 
-### 🚀 Quick start — using builder helpers
-
-Use the shortcuts from `@utils/builder` to write commands in seconds:
-
-```ts
-import { simple, cmd, str, usr, modCmd } from '../utils/builder';
-
-// Simplest possible command
-export default simple('hello', 'Say hello!', async (interaction) => {
-  await interaction.reply('Hello! 👋');
-});
-
-// Command with options
-export const data = cmd('echo', 'Repeat a message').addStringOption(str('message', 'Text to repeat'));
-export async function execute(interaction) {
-  await interaction.reply(interaction.options.getString('message', true));
-}
-
-// Mod-only command
-export const data = modCmd('warn', 'Warn a user').addUserOption(usr('target', 'Who to warn'));
-export async function execute(interaction) { /* ... */ }
-```
-
-### 🧱 Available builders
-
-| Helper | Shortcut for |
-|--------|-------------|
-| `cmd(name, desc)` | `new SlashCommandBuilder().setName().setDescription()` |
-| `sub(name, desc)` | `new SlashCommandSubcommandBuilder()` |
-| `modCmd(name, desc, perms?)` | `cmd()` + `setDefaultMemberPermissions(ManageMessages)` |
-| `adminCmd(name, desc)` | `cmd()` + `setDefaultMemberPermissions(Administrator)` |
-| `str(name, desc, required?)` | String option |
-| `int(name, desc, required?)` | Integer option |
-| `bool(name, desc, required?)` | Boolean option |
-| `usr(name, desc, required?)` | User option |
-| `role(name, desc, required?)` | Role option |
-| `ch(name, desc, required?)` | Channel option |
-| `simple(name, desc, handler)` | Returns `{ data, execute }` ready to export |
-| `dual(name, desc, slashHandler, prefixHandler?)` | Command that works with **both** `/slash` and `!prefix` |
-| `defineCommand(config)` | Discord JSON-style config → full command |
-
-### 📋 Discord JSON-style commands
+### 🚀 Quick start — using defineCommand
 
 Use `defineCommand()` with a config object that mirrors Discord's official API structure:
 
 ```ts
-import { defineCommand } from '../utils/define';
+import { defineCommand, Perm } from '@utils/builders/define.js';
 
 export default defineCommand({
   name: 'ban',
   description: 'Ban a member',
-  defaultMemberPermissions: PermissionFlagsBits.BanMembers,
+  defaultMemberPermissions: Perm.BanMembers,
   options: [
-    { type: 'user',    name: 'target',       description: 'Who to ban',  required: true },
-    { type: 'string',  name: 'reason',       description: 'Why' },
+    { type: 'user',    name: 'target',        description: 'Who to ban', required: true },
+    { type: 'string',  name: 'reason',        description: 'Why' },
     { type: 'integer', name: 'delete_messages', description: 'Delete recent messages', min: 0, max: 7 },
   ],
   execute: async (interaction) => {
-    const user = interaction.options.getUser('target', true);
-    await interaction.guild?.members.ban(user);
-    await interaction.reply(`🔨 Banned ${user.tag}`);
+    await interaction.guild?.members.ban(interaction.options.getUser('target', true));
+    await interaction.reply('🔨 Banned');
   },
 });
 ```
 
-This matches how Discord documents commands in their developer portal — clean, flat, no chaining.
+This matches how Discord documents commands — clean, flat JSON, no chaining.
+
+### 🧱 Available options
+
+| Config option | Description |
+|--------------|-------------|
+| `name` | Command name |
+| `description` | Command description |
+| `options` | Array of option configs `{ type, name, description, required?, min?, max?, choices? }` |
+| `defaultMemberPermissions` | Permission bitfield (use `Perm.BanMembers`, `Perm.ManageMessages`, etc) |
+| `defaultBotPermissions` | Bot checks permission at runtime before executing |
+| `ownerOnly: true` | Only the bot owner can use it |
+| `cooldown: 5` | Seconds between uses per user |
+| `paginate: { title, itemsPerPage? }` | Auto-paginates if execute returns an array |
+| `dmPermission: false` | Block in DMs |
+| `subcommands` | Array of subcommand configs |
 
 ### ⚡ Prefix commands
 
-This bot supports **both** slash commands and traditional prefix commands (`!ping`, `/ping`).
+This bot supports **both** slash commands and prefix commands (`!ping`, `/ping`).
 
-- **Default prefix**: `/` (configurable via `/config set prefix !`)
+- **Default prefix**: `/` (configurable via `/config` wizard)
 - Commands export `prefixExecute(message, args)` for prefix support
-- Use `dual()` helper to create a command that works both ways:
+- Use `simple()` or `dual()` for quick commands:
 
 ```ts
-import { dual } from '../utils/builder';
+import { simple, dual } from '@utils/builders/define.js';
 
+// Slash only
+export default simple('hello', 'Say hi!', async (i) => i.reply('Hi!'));
+
+// Slash + prefix
 export default dual('ping', 'Check latency',
-  async (i) => { /* slash handler — receives Interaction */ },
-  async (m, a) => { /* prefix handler — receives Message + args */ },
+  async (i) => { /* slash handler */ },
+  async (m, a) => { /* prefix handler */ },
 );
 ```
 
-> ⚡ **`simple()`** + **`dual()`** both work with prefix if you export `prefixExecute`.
-> The `ping` command already ships with full prefix support. Try `!ping` or `/ping`!
-
-> 💡 **Tip:** Use `replyError` and `replySuccess` from `@utils/helpers` for quick ephemeral responses.
+> ⚡ The `ping` command already ships with full prefix support. Try `!ping` or `/ping`!
 
 ---
 
