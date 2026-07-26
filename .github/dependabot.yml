@@ -10,9 +10,6 @@ updates:
     commit-message:
       prefix: 'chore'
       include: scope
-    ignore:
-      - dependency-name: 'chalk'
-        versions: ['>=5']
 
   - package-ecosystem: github-actions
     directory: '/'

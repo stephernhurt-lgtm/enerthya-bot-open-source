@@ -24,7 +24,7 @@ function write(level: LogLevel, ...args: unknown[]): void {
   const tag = level.toUpperCase().padEnd(5);
   const line = `${time} [${tag}] ${msg}`;
 
-  const colorMap: Record<LogLevel, chalk.Chalk> = {
+  const colorMap: Record<LogLevel, typeof chalk> = {
     debug: chalk.gray,
     info: chalk.cyan,
     warn: chalk.yellow,
